@@ -1,0 +1,102 @@
+#lobby {
+    opacity: 100;
+    transition: opacity .5s;
+}
+
+#round_number {
+    opacity: 0;
+    transition: .5s;
+}
+
+#round_num {
+    opacity: 100;
+
+}
+
+#round {
+    opacity: 0;
+    transition: opacity .5s;
+}
+
+#time {
+    opacity: 0;
+    transition: opacity .5s;
+}
+
+#lobby_number {
+    opacity: 1;
+    transition: opacity .5s;
+}
+
+#create_game_input {
+    opacity: 0;
+}
+
+#create_game {
+    background-color: transparent !important;
+}
+
+#create_game:hover {
+    background-color: gray !important;
+    -webkit-transition: background-color 500ms linear;
+    -ms-transition: background-color 500ms linear;
+    transition: background-color 500ms linear;
+}
+
+#end_buttons {
+    opacity: 0;
+    transition: opacity .5s;
+}
+
+#join_game {
+    background-color: transparent !important;
+}
+
+#join_game:hover {
+    background-color: gray !important;
+    -webkit-transition: background-color 500ms linear;
+    -ms-transition: background-color 500ms linear;
+    transition: background-color 500ms linear;
+}
+
+#play_button {
+    width: 2em;
+    height: 2em;
+    padding: 6px 0px;
+    border-radius: 1em;
+    font-size: 1.75em;
+    text-align: center;
+}
+
+#album_image {
+    object-fit: contain;
+    height: 10em;
+    width: 10em;
+    background-color: transparent;
+    border: 0;
+}
+
+#player_card:hover {
+    background-color: transparent;
+}
+
+#player_card:hover {
+    transition: background-color 1s;
+    background-color: gray;
+}
+
+body {
+    overflow: hidden;
+
+}
+
+#main {
+    background-image: url('spot2.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+#score {
+    opacity: 0;
+    transition: opacity .5s;
+}
