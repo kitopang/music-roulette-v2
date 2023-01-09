@@ -15,7 +15,7 @@ function add_spotify(access_token, ip_address, res) {
             spotify_api.getMe()
                 .then(function (data) {
                     console.log('Some information about the authenticated user', data.body);
-                    spotify_item = { username: data.body.id, topTracks, ip_address }
+                    spotify_item = { username: data.body.id, ip_address, access_token }
                     spotify_data.push(spotify_item);
                     res.render('home_page.ejs')
                 }, function (err) {

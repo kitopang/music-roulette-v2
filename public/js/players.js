@@ -1,7 +1,7 @@
 const players = [];
 
-function player_join(socket_id, username, lobby_code, top_tracks, score, correct) {
-    const player = { socket_id, username, lobby_code, top_tracks, score, correct };
+function player_join(socket_id, username, lobby_code, access_token, score, correct) {
+    const player = { socket_id, username, lobby_code, access_token, score, correct };
 
     players.push(player);
 

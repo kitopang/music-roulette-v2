@@ -39,10 +39,10 @@ io.on('connection', socket => {
     // Handle a player joining a game lobby
     socket.on('join_lobby', (code) => {
         const spotify_item = get_spotify(clientIp);
-        const player = player_join(socket.id, spotify_item.username, code, spotify_item.topTracks, 0, undefined);
+        const player = player_join(socket.id, spotify_item.username, code, spotify_item.access_token, 0, undefined);
 
         // Add player to existing lobby or create a new lobby 
-        join_lobby(code, player, 15);
+        join_lobby(code, player, 10);
 
         // Add player to lobby on socket.io side
         socket.join(player.lobby_code)
@@ -86,7 +86,7 @@ io.on('connection', socket => {
         io.in(player.lobby_code).emit('startgame', start);
 
         // Recursive call to start the rounds
-        game_timer(lobby, socket);
+        // game_timer(lobby, socket);
     });
 
     // ***** THE FOLLOWING HANDLES GAMEPLAY ***** //

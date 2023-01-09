@@ -17,6 +17,9 @@ const scoreboard = document.querySelector('#scoreboard');
 const end_buttons = document.querySelector('#end_buttons');
 const timer = document.querySelector('#time');
 
+const category_header = document.querySelector('#category_header');
+const genre_div = document.querySelector('#genre_div')
+
 let song_url;
 let chosen_player;
 let global_selected_card;
@@ -63,8 +66,10 @@ socket.on('startgame', start => {
 
         setTimeout(function () {
             lobby_div.classList.add('d-none');
+            category_header.classList.remove('d-none');
             lobby_number.classList.add('d-none');
-            timer.classList.remove('d-none');
+            genre_div.classList.remove('d-none');
+            //timer.classList.remove('d-none');
             timer.style.opacity = '1';
         }, 500);
     }
