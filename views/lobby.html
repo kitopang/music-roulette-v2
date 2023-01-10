@@ -14,7 +14,8 @@
 </head>
 
 <body>
-    <div class="container-fluid min-vh-100" style="background-color: #000000;">
+    <div class="container-fluid  min-vh-100 align-items-center justify-content-center"
+        style="background-color: #000000;">
 
         <h1 class="display-5 text-light mb-1 pt-5 px-5 fw-bold"><span style="color: #43A047">musicRoulette</span><span
                 style="color: #ffffff">.io</span>
@@ -50,22 +51,28 @@
 
         </div>
 
-        <div class="d-none" id="genre_div">
-            <div class="justify-content-center mx-auto align-items-center d-flex">
-                <div class="row">
-                    <div class="col-6">
-                        <input type="radio" class="btn-check" name="options-outlined" id="success-outlined"
-                            autocomplete="off" checked>
-                        <label class="btn btn-outline-success" for="success-outlined">Checked success radio</label>
-                    </div>
+        <div class="d-none text-center d-flex justify-content-center" id="genre_div">
 
-                    <div class="col-6">
-                        <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined"
-                            autocomplete="off">
-                        <label class="btn btn-outline-danger" for="danger-outlined">Danger radio</label>
+            <div class="row">
+                <div class="col-2 m-5 d-inline">
+                    <div>
+                        <input type="radio" class="btn-check" name="options-outlined" id="genre_selection1"
+                            autocomplete="off" checked>
+                        <label class="btn btn-outline-light btn-lg text-nowrap" for="genre_selection1">Hip Hop</label>
                     </div>
                 </div>
 
+                <div class="col-2 m-5">
+                    <input type="radio" class="btn-check" name="options-outlined" id="genre_selection2"
+                        autocomplete="off">
+                    <label class="btn btn-outline-light btn-lg text-nowrap" for="genre_selection2">Pop</label>
+                </div>
+
+                <div class="col-2 m-5">
+                    <input type="radio" class="btn-check" name="options-outlined" id="genre_selection3"
+                        autocomplete="off">
+                    <label class="btn btn-outline-light btn-lg text-nowrap" for="genre_selection3">Country</label>
+                </div>
             </div>
             <div class="d-flex justify-content-center">
 
