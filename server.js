@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'views')));
 const { player_join, player_leave, get_player } = require('./public/js/players');
-const { add_spotify, get_spotify } = require('./public/js/spotify');
+const { add_spotify, get_spotify, generate_songs } = require('./public/js/spotify');
 const { join_lobby, lobby_leave, get_lobby, sort_players } = require('./public/js/lobby');
 
 const PORT = process.env.PORT || 3000;
@@ -89,13 +89,17 @@ io.on('connection', socket => {
         // game_timer(lobby, socket);
     });
 
-    socket.on('genre_selected', (genre) => {
+    socket.on('genre_selected', async (genre) => {
         let player = get_player(socket.id);
         let lobby = get_lobby(player.lobby_code);
 
         lobby.genre = genre;
 
         io.in(player.lobby_code).emit('genre_selection_completed', genre);
+
+        let generated_songs = await generate_songs(socket.request.connection.remoteAddress, lobby);
+        lobby.music_array = generated_songs;
+
         game_timer(lobby, socket);
     });
 
@@ -109,6 +113,7 @@ io.on('connection', socket => {
         lobby.ready_players++;
 
         // If song selection matches the correct song, then emit true to client 
+        // instead of username, do lobby.music_array[0] === username.trim()
         if (username.trim() === lobby.music_info.player_chosen.username.trim()) {
             // Calculate score using a simliar algorithim that Kahoot uses
             let score = Math.floor((1 - ((lobby.time_elapsed / lobby.max_time) / 2)) * 1000);
@@ -133,33 +138,35 @@ io.on('connection', socket => {
 function game_timer(lobby, socket) {
     let seconds = 0;
     let player = get_player(socket.id);
+    let four_random_songs = choose_random_song(lobby);
+    lobby.four_random_songs = four_random_songs;
+
+    console.log(four_random_songs);
     // Choose a random song that players have to guess
-    let music_info = choose_random_song(lobby.players);
-    let first_round = lobby.current_round === 0;
 
-    // Base case: the max number of rounds is played. 
-    if (lobby.current_round === lobby.max_rounds) {
-        io.in(player.lobby_code).emit('end_game', lobby)
-        return;
-    }
+    // // Base case: the max number of rounds is played. 
+    // if (lobby.current_round === lobby.max_rounds) {
+    //     io.in(player.lobby_code).emit('end_game', lobby)
+    //     return;
+    // }
 
-    // Signal to the lobbies that a new round is being run. Pass in the randomly selected song
-    io.in(player.lobby_code).emit('new_round', music_info, lobby.players, first_round);
+    // // Signal to the lobbies that a new round is being run. Pass in the randomly selected song
+    // io.in(player.lobby_code).emit('new_round', music_info, lobby.players, first_round);
 
-    // Set a timer for each round that runs for a specified amount of time
-    let interval = setInterval(function () {
-        io.in(player.lobby_code).emit('update_time', lobby.max_time - seconds);
-        lobby.time_elapsed = seconds;
-        seconds++;
-        if (seconds === lobby.max_time) {
-            // Once timer completes, call helper function to setup new round
-            initiate_next_round(lobby, player, socket);
-        }
-    }, 1000);
+    // // Set a timer for each round that runs for a specified amount of time
+    // let interval = setInterval(function () {
+    //     io.in(player.lobby_code).emit('update_time', lobby.max_time - seconds);
+    //     lobby.time_elapsed = seconds;
+    //     seconds++;
+    //     if (seconds === lobby.max_time) {
+    //         // Once timer completes, call helper function to setup new round
+    //         initiate_next_round(lobby, player, socket);
+    //     }
+    // }, 1000);
 
-    // Save this specific timer instance so each lobby has a unique timer
-    lobby.interval = interval;
-    lobby.music_info = music_info;
+    // // Save this specific timer instance so each lobby has a unique timer
+    // lobby.interval = interval;
+    // lobby.music_info = music_info;
 }
 
 // Helper function to initiate next round
@@ -185,14 +192,22 @@ function initiate_next_round(lobby, player, socket) {
 }
 
 // Choose a random song by finding a random index in player and song lists
-function choose_random_song(current_players) {
-    let random_player_index = Math.floor(Math.random() * current_players.length);
-    let random_player = current_players[random_player_index];
-    let random_song_index = Math.floor(Math.random() * random_player.top_tracks.length);
-    let random_song = random_player.top_tracks[random_song_index];
+function choose_random_song(lobby) {
+    let visited_set = new Set();
+    let four_random_songs = [];
+    let index = 0;
 
-    let music_info = { song_image_url: random_song.album.images[0].url, song_url: random_song.preview_url, title: random_song.name, artist: random_song.artists[0].name, player_chosen: random_player }
-    return music_info;
+    while (index < 4) {
+        var x = Math.floor(Math.random() * (lobby.max_rounds * 3)) + 1;
+
+        if (!visited_set.has(x)) {
+            visited_set.add(x);
+            four_random_songs.push(lobby.music_array[x]);
+            index++;
+        }
+    }
+
+    return four_random_songs;
 }
 
 
