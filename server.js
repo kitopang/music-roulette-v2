@@ -89,6 +89,16 @@ io.on('connection', socket => {
         // game_timer(lobby, socket);
     });
 
+    socket.on('genre_selected', (genre) => {
+        let player = get_player(socket.id);
+        let lobby = get_lobby(player.lobby_code);
+
+        lobby.genre = genre;
+
+        io.in(player.lobby_code).emit('genre_selection_completed', genre);
+        game_timer(lobby, socket);
+    });
+
     // ***** THE FOLLOWING HANDLES GAMEPLAY ***** //
     // If a user selects a song choice, do stuff
     socket.on('ready', (username) => {
@@ -260,7 +270,9 @@ app.get('/callback', (req, res) => {
             );
 
             // Store spotify information of each joined user 
-            add_spotify(access_token, ip, res)
+            add_spotify(access_token, ip)
+            res.render('home_page.ejs')
+
 
             setInterval(async () => {
                 const data = await spotifyApi.refreshAccessToken();

@@ -28,6 +28,18 @@
     transition: opacity .5s;
 }
 
+#genre_div {
+    opacity: 1;
+    transition: opacity .5s;
+}
+
+#category_header {
+    opacity: 1;
+    transition: opacity .5s;
+}
+
+
+
 #create_game_input {
     opacity: 0;
 }

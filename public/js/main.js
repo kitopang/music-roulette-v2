@@ -18,7 +18,9 @@ const end_buttons = document.querySelector('#end_buttons');
 const timer = document.querySelector('#time');
 
 const category_header = document.querySelector('#category_header');
-const genre_div = document.querySelector('#genre_div')
+const genre_div = document.querySelector('#genre_div');
+const genre_selection = document.querySelector('#genre_selection');
+const genre_custom_input = document.querySelectorAll('#genre_custom_input');
 
 let song_url;
 let chosen_player;
@@ -76,6 +78,24 @@ socket.on('startgame', start => {
 
     console.log(start)
 })
+
+socket.on('genre_selection_completed', genre => {
+    genre_div.style.opacity = '0';
+    category_header.opacity = '0';
+    timer.style.opacity = '0';
+
+    setTimeout(function () {
+        genre_div.classList.add('d-none');
+        category_header.classList.add('d-none');
+        timer.classList.remove('d-none');
+
+        setTimeout(function () {
+            timer.style.opacity = '1';
+        }, 500);
+
+    }, 500);
+
+});
 
 
 socket.on('new_round', (music_data, player_data, first_round) => {
@@ -321,8 +341,6 @@ play_button.addEventListener("click", () => {
     }
 })
 
-
-
 start_game_button.addEventListener("click", () => {
     socket.emit('startgame', 'true');
     console.log("emits");
@@ -330,5 +348,17 @@ start_game_button.addEventListener("click", () => {
 
 start_game_button2.addEventListener("click", () => {
     socket.emit('startgame', 'true');
+});
+
+genre_selection.addEventListener("click", function (e) {
+    if (e.target.type === "button") {
+        genre_custom_input[0].value = e.target.innerText;
+        genre_custom_input[1].click();
+    }
+});
+
+genre_custom_input[1].addEventListener("click", () => {
+    console.log(genre_custom_input[0].value);
+    socket.emit('genre_selected', genre_custom_input[0].value);
 });
 
