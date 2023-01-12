@@ -140,18 +140,19 @@ function game_timer(lobby, socket) {
     let player = get_player(socket.id);
     let four_random_songs = choose_random_song(lobby);
     lobby.four_random_songs = four_random_songs;
+    let first_round = lobby.current_round === 0
 
-    console.log(four_random_songs);
     // Choose a random song that players have to guess
+    console.log(four_random_songs);
 
-    // // Base case: the max number of rounds is played. 
-    // if (lobby.current_round === lobby.max_rounds) {
-    //     io.in(player.lobby_code).emit('end_game', lobby)
-    //     return;
-    // }
+    // Base case: the max number of rounds is played. 
+    if (lobby.current_round === lobby.max_rounds) {
+        io.in(player.lobby_code).emit('end_game', lobby)
+        return;
+    }
 
-    // // Signal to the lobbies that a new round is being run. Pass in the randomly selected song
-    // io.in(player.lobby_code).emit('new_round', music_info, lobby.players, first_round);
+    // Signal to the lobbies that a new round is being run. Pass in the randomly selected song
+    io.in(player.lobby_code).emit('new_round', four_random_songs, lobby.players, first_round);
 
     // // Set a timer for each round that runs for a specified amount of time
     // let interval = setInterval(function () {

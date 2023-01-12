@@ -31,7 +31,7 @@ function generate_songs(ip_address, lobby) {
     return new Promise(function (resolve, reject) {
         spotify_api.searchPlaylists(lobby.genre)
             .then(function (data) {
-                let id = data.body.playlists.items[0].id;
+                let id = data.body.playlists.items[1].id;
 
                 spotify_api.getPlaylistTracks(id, {
                     offset: 1,

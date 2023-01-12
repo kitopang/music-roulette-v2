@@ -206,8 +206,8 @@ function render_next_round(music_data, player_data, first_round) {
     }
 
     play_button.value = "false";
-    populate_players(player_data);
-    set_random_song(music_data);
+    populate_cards(music_data);
+    set_random_song(music_data[0].track);
 
 
     if (first_round) {
@@ -247,13 +247,14 @@ function render_next_round(music_data, player_data, first_round) {
     }
 }
 
-function populate_players(player_data) {
-    let current_players = player_data;
+// replace player_data with song_data. 
+function populate_cards(music_data) {
 
     let current_row;
-    index = 0;
-    for (let i = 0; i < current_players.length; i++) {
-        let player = current_players[i];
+    let index = 0;
+    for (let i = 0; i < 4; i++) {
+        let song = music_data[i];
+        console.log(song);
 
         if ((index % 2) === 0) {
             current_row = document.createElement("div");
@@ -264,7 +265,8 @@ function populate_players(player_data) {
             entry.setAttribute('id', 'player_card')
             entry.setAttribute('value', 'false');
             let text = document.createElement("h4");
-            text.innerText = player.username;
+            // Change inner text to song name instead
+            text.innerText = song.track.name;
             text.classList.add('text-light', 'fw-bold');
 
             player_choices_div.append(current_row);
@@ -276,7 +278,7 @@ function populate_players(player_data) {
             entry.setAttribute('id', 'player_card');
             entry.setAttribute('value', 'false');
             let text = document.createElement("h4");
-            text.innerText = player.username;
+            text.innerText = song.track.name;
             text.classList.add('text-light', 'fw-bold');
 
             current_row.append(entry);
@@ -287,7 +289,7 @@ function populate_players(player_data) {
     }
 
     let player_cards = document.querySelectorAll('#player_card');
-    for (let index = 0; index < player_cards.length; index++) {
+    for (let index = 0; index < 4; index++) {
         let selected_card = player_cards[index];
         let text = selected_card.firstChild;
 
@@ -322,12 +324,11 @@ function remove_selection(player_card) {
 }
 
 function set_random_song(music_data) {
-    album_image.setAttribute('src', music_data.song_image_url);
-    song_title.innerText = music_data.title;
-    song_artist.innerText = music_data.artist;
-    song_url = music_data.song_url;
+    album_image.setAttribute('src', music_data.album.images[0].url);
+    song_title.innerText = "Album: " + music_data.album.name;
+    song_artist.innerText = "Rel. " + music_data.album.release_date.substring(0, 4);
+    song_url = music_data.preview_url;
 }
-
 
 play_button.addEventListener("click", () => {
     myAudio.setAttribute('src', song_url);
@@ -340,6 +341,7 @@ play_button.addEventListener("click", () => {
         play_button.value = "false";
     }
 })
+
 
 start_game_button.addEventListener("click", () => {
     socket.emit('startgame', 'true');
