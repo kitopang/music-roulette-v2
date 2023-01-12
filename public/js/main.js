@@ -119,7 +119,7 @@ socket.on('show_results', lobby => {
     global_selected_card = undefined;
     player_is_correct = undefined;
 
-    round_num.innerText = "Round " + (lobby.current_round + 1) + "/15";
+    round_num.innerText = "Round " + (lobby.current_round + 1) + "/10";
     myAudio.pause();
     show_leaderboard(lobby);
 })
@@ -325,8 +325,7 @@ function remove_selection(player_card) {
 
 function set_random_song(music_data) {
     album_image.setAttribute('src', music_data.album.images[0].url);
-    song_title.innerText = "Album: " + music_data.album.name;
-    song_artist.innerText = "Rel. " + music_data.album.release_date.substring(0, 4);
+    song_title.innerText = "Rel. " + music_data.album.release_date.substring(0, 4);
     song_url = music_data.preview_url;
 }
 

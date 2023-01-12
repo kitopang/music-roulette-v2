@@ -36,7 +36,8 @@ function generate_songs(ip_address, lobby) {
                 spotify_api.getPlaylistTracks(id, {
                     offset: 1,
                     limit: 30,
-                    fields: 'items'
+                    fields: 'items',
+                    market: 'US'
                 })
                     .then(
                         function (data) {

@@ -105,16 +105,18 @@ io.on('connection', socket => {
 
     // ***** THE FOLLOWING HANDLES GAMEPLAY ***** //
     // If a user selects a song choice, do stuff
-    socket.on('ready', (username) => {
+    socket.on('ready', (song_selection) => {
         let player = get_player(socket.id);
         let lobby = get_lobby(player.lobby_code);
 
         // Increase number of ready players 
         lobby.ready_players++;
 
+
         // If song selection matches the correct song, then emit true to client 
         // instead of username, do lobby.music_array[0] === username.trim()
-        if (username.trim() === lobby.music_info.player_chosen.username.trim()) {
+        if (song_selection.trim() === lobby.four_random_songs[0].track.name.trim()) {
+            console.log("good");
             // Calculate score using a simliar algorithim that Kahoot uses
             let score = Math.floor((1 - ((lobby.time_elapsed / lobby.max_time) / 2)) * 1000);
             player.score += score;
@@ -154,20 +156,19 @@ function game_timer(lobby, socket) {
     // Signal to the lobbies that a new round is being run. Pass in the randomly selected song
     io.in(player.lobby_code).emit('new_round', four_random_songs, lobby.players, first_round);
 
-    // // Set a timer for each round that runs for a specified amount of time
-    // let interval = setInterval(function () {
-    //     io.in(player.lobby_code).emit('update_time', lobby.max_time - seconds);
-    //     lobby.time_elapsed = seconds;
-    //     seconds++;
-    //     if (seconds === lobby.max_time) {
-    //         // Once timer completes, call helper function to setup new round
-    //         initiate_next_round(lobby, player, socket);
-    //     }
-    // }, 1000);
+    // Set a timer for each round that runs for a specified amount of time
+    let interval = setInterval(function () {
+        io.in(player.lobby_code).emit('update_time', lobby.max_time - seconds);
+        lobby.time_elapsed = seconds;
+        seconds++;
+        if (seconds === lobby.max_time) {
+            // Once timer completes, call helper function to setup new round
+            initiate_next_round(lobby, player, socket);
+        }
+    }, 1000);
 
-    // // Save this specific timer instance so each lobby has a unique timer
-    // lobby.interval = interval;
-    // lobby.music_info = music_info;
+    // Save this specific timer instance so each lobby has a unique timer
+    lobby.interval = interval;
 }
 
 // Helper function to initiate next round
@@ -199,12 +200,18 @@ function choose_random_song(lobby) {
     let index = 0;
 
     while (index < 4) {
-        var x = Math.floor(Math.random() * (lobby.max_rounds * 3)) + 1;
+        var x = Math.floor(Math.random() * (lobby.music_array.length));
 
         if (!visited_set.has(x)) {
             visited_set.add(x);
-            four_random_songs.push(lobby.music_array[x]);
-            index++;
+            if (index == 0 && !lobby.visited_songs.has(x)) {
+                lobby.visited_songs.add(x);
+                four_random_songs.push(lobby.music_array[x]);
+                index++;
+            } else if (index != 0) {
+                four_random_songs.push(lobby.music_array[x]);
+                index++;
+            }
         }
     }
 
