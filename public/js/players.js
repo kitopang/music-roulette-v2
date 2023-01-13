@@ -1,15 +1,15 @@
 const players = [];
 
+// Handle a player joining a lobby
 function player_join(socket_id, username, lobby_code, access_token, score, correct) {
     const player = { socket_id, username, lobby_code, access_token, score, correct };
 
     players.push(player);
 
-    console.log(players);
-
     return player;
 }
 
+// Handle a player leaving a lobby
 function player_leave(socket_id) {
     const index = players.findIndex(player => player.socket_id === socket_id);
 
@@ -18,7 +18,7 @@ function player_leave(socket_id) {
     }
 }
 
-
+// Return player object given their socket id
 function get_player(socket_id) {
     return players.find(player => player.socket_id === socket_id);
 }

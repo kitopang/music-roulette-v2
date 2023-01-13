@@ -1,31 +1,43 @@
 const lobbies = [];
 
+// Add a player to a lobby
 function join_lobby(code, player, max_rounds) {
     let existing_lobby = get_lobby(code);
 
+    // If lobby exists, add player to lobby
     if (existing_lobby) {
         existing_lobby.players.push(player);
     } else {
+        // If lobby doesn't exist, create it
+        // music_array --> holds all of the songs that are to be selected form
+        // four_random_songs --> holds 4 random songs that were selected from music_array
+        // visited_sogns --> holds all songs that have already been selected as the answer to prevent duplicates from occuring
+        // interval --> holds the timer object that is unique to each lobby
+        // correct song --> holds the correct song object that will be compared against player answers
         const lobby = { code, info: undefined, interval: undefined, players: [], ready_players: 0, current_round: 0, max_rounds, music_array: [], time_elapsed: 0, max_time: 30, genre: undefined, four_random_songs: [], visited_songs: new Set(), correct_song: undefined };
         lobby.players.push(player);
         lobbies.push(lobby);
     }
 }
 
+// Return lobby object given its code
 function get_lobby(code) {
     return lobbies.find(lobby => lobby.code === code);
 }
 
+// Remove player form lobby if they leave
 function lobby_leave(lobby, player) {
     const index = lobby.players.indexOf(player);
     console.log(index);
 
+    // Remove player from player array within libby
     if (index !== -1) {
         lobby.players.splice(index, 1);
     }
 
     clearInterval(lobby.interval);
 
+    // Delete entire lobby if it's empty
     if (lobby.players.length === 0) {
         let lobby_index = lobbies.indexOf(lobby);
 
@@ -35,30 +47,8 @@ function lobby_leave(lobby, player) {
     }
 }
 
-function sort_players(lobby) {
-    console.log("sorting");
-    lobby.players = lobby.players.sort(comparator);
-}
-
-function comparator(a, b) {
-    if (a.score < b.score) {
-        return 1;
-    }
-    if (a.score > b.score) {
-        return -1;
-    }
-
-    return 0;
-}
-
-
-
-
-
-
 module.exports = {
     join_lobby,
     get_lobby,
     lobby_leave,
-    sort_players
 };

@@ -20,11 +20,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'views')));
 const { player_join, player_leave, get_player } = require('./public/js/players');
 const { add_spotify, get_spotify, generate_songs } = require('./public/js/spotify');
-const { join_lobby, lobby_leave, get_lobby, sort_players } = require('./public/js/lobby');
+const { join_lobby, lobby_leave, get_lobby } = require('./public/js/lobby');
 
 const PORT = process.env.PORT || 3000;
 
-app.set('view engine', 'ejs');
+// Allow express to use HTML as its view engine
+app.engine('html', require('ejs').renderFile);
 app.set('views', path.join(__dirname, '/views'));
 
 // Handle a user entering the game homescreen
@@ -84,22 +85,24 @@ io.on('connection', socket => {
 
         // Signal the lobbies to start their games
         io.in(player.lobby_code).emit('startgame', start);
-
-        // Recursive call to start the rounds
-        // game_timer(lobby, socket);
     });
 
+    // Listen for genre selection by a player
     socket.on('genre_selected', async (genre) => {
         let player = get_player(socket.id);
         let lobby = get_lobby(player.lobby_code);
 
+        // Update entire lobby's genre object
         lobby.genre = genre;
 
+        // Tell players to continue
         io.in(player.lobby_code).emit('genre_selection_completed', genre);
 
+        // Generate songs and add it to the lobby's music array. Use await to make async call blocking (not asynchronous) 
         let generated_songs = await generate_songs(socket.request.connection.remoteAddress, lobby);
         lobby.music_array = generated_songs;
 
+        // Recursive call to start the rounds 
         game_timer(lobby, socket);
     });
 
@@ -112,9 +115,7 @@ io.on('connection', socket => {
         // Increase number of ready players 
         lobby.ready_players++;
 
-
         // If song selection matches the correct song, then emit true to client 
-        // instead of username, do lobby.music_array[0] === username.trim()
         console.log(lobby.correct_song.track.name.trim());
         console.log(song_selection.trim());
         if (song_selection.trim() === lobby.correct_song.track.name.trim()) {
@@ -137,19 +138,18 @@ io.on('connection', socket => {
 })
 
 
-// ***** Helper functions for the above conditionals ***** //
+// ***** Helper functions for the above socket conditionals ***** //
 // Start game timer and initiate rounds. Each round is a recursive call. 
 function game_timer(lobby, socket) {
     let seconds = 0;
     let player = get_player(socket.id);
 
-    // Choose a random song that players have to guess
+    // Choose a four random songs that players have to guess and update lobby info
     let four_random_songs = choose_random_song(lobby);
     lobby.four_random_songs = four_random_songs;
     lobby.correct_song = four_random_songs[0];
 
     let first_round = lobby.current_round === 0
-
 
     // Base case: the max number of rounds is played. 
     if (lobby.current_round === lobby.max_rounds) {
@@ -162,9 +162,12 @@ function game_timer(lobby, socket) {
 
     // Set a timer for each round that runs for a specified amount of time
     let interval = setInterval(function () {
+        // Send server time to clients to update their HTML DOM elements
         io.in(player.lobby_code).emit('update_time', lobby.max_time - seconds);
         lobby.time_elapsed = seconds;
         seconds++;
+
+        // If max time is reached, then continue to next round
         if (seconds === lobby.max_time) {
             // Once timer completes, call helper function to setup new round
             initiate_next_round(lobby, player, socket);
@@ -178,7 +181,6 @@ function game_timer(lobby, socket) {
 // Helper function to initiate next round
 function initiate_next_round(lobby, player, socket) {
     // Sort players so player cards appear the same for every lobby
-    sort_players(lobby);
 
     // Reset the number of ready players and increment round count
     lobby.ready_players = 0;
@@ -203,22 +205,24 @@ function choose_random_song(lobby) {
     let four_random_songs = [];
     let index = 0;
 
+    // Algorithm to choose four distinct random songs, with the first one being a song that hasn't been chosen to be the answer before
     while (index < 4) {
         var x = Math.floor(Math.random() * (lobby.music_array.length));
-
+        // Check to see if randomly chosen index is different, otherwise choose again
         if (!visited_set.has(x)) {
             visited_set.add(x);
+            // If we're adding the first song to the array, make sure it hasn't already been chosen before
             if (index == 0 && !lobby.visited_songs.has(x)) {
                 lobby.visited_songs.add(x);
                 four_random_songs.push(lobby.music_array[x]);
                 index++;
+                // If we're not adding the first song to the array, you can choose anything
             } else if (index != 0) {
                 four_random_songs.push(lobby.music_array[x]);
                 index++;
             }
         }
     }
-
     return four_random_songs;
 }
 
@@ -298,7 +302,7 @@ app.get('/callback', (req, res) => {
 
             // Store spotify information of each joined user 
             add_spotify(access_token, ip)
-            res.render('home_page.ejs')
+            res.render('home_page.html')
 
 
             setInterval(async () => {

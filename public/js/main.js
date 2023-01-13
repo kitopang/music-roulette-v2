@@ -22,68 +22,80 @@ const genre_div = document.querySelector('#genre_div');
 const genre_selection = document.querySelector('#genre_selection');
 const genre_custom_input = document.querySelectorAll('#genre_custom_input');
 
+const socket = io();
+
 let song_url;
 let chosen_player;
 let global_selected_card;
 let player_is_correct;
 
-
+// Get lobby code from URL query string
 const lobby = Qs.parse(location.search, {
     ignoreQueryPrefix: true
 })
 
+// Update lobby number DOM element
 lobby_number.innerText = 'Lobby: ' + lobby.code;
-console.log(lobby.code);
 
-const socket = io();
-
+// Handle messages for debugging purposes
 socket.on('message', message => {
     console.log(message);
 })
 
+// Server --> client; removes player from lobby GUI
 socket.on('disconnect_player', player => {
     remove_player_from_lobby(player);
 })
 
+// Client --> server; tells server that a new player has joined
 socket.emit('join_lobby', lobby.code);
 
+// Server --> client; tells client to add a plyer to lobby GUI
 socket.on('join_lobby', player => {
     add_player_to_lobby(player);
 })
 
+// Client --> server; tells server to return all the existing players in the lobby
 socket.emit('initialize_lobby', lobby.code)
 
+// Server --> client; allows client to populate lobby with players that are already in  
 socket.on('initialize_lobby', players => {
     for (player of players) {
         add_player_to_lobby(player);
     }
 })
 
+// Server --> client; game has started, so show genre page
 socket.on('startgame', start => {
     if (start === 'true') {
+        // Hide lobby GUI
         lobby_div.style.opacity = '0';
         end_buttons.style.opacity = '0';
         lobby_number.style.opacity = '0';
 
-
+        // Show genre selection page
         setTimeout(function () {
             lobby_div.classList.add('d-none');
             category_header.classList.remove('d-none');
             lobby_number.classList.add('d-none');
             genre_div.classList.remove('d-none');
-            //timer.classList.remove('d-none');
+            setTimeout(function () {
+                genre_div.style.opacity = '1';
+                category_header.style.opacity = '1';
+            }, 500);
             timer.style.opacity = '1';
         }, 500);
     }
-
-    console.log(start)
 })
 
+// Server --> client; genre has been selected, so start actual gameplay
 socket.on('genre_selection_completed', genre => {
+    // Hide genre page
     genre_div.style.opacity = '0';
     category_header.opacity = '0';
     timer.style.opacity = '0';
 
+    // Show timer 
     setTimeout(function () {
         genre_div.classList.add('d-none');
         category_header.classList.add('d-none');
@@ -97,16 +109,17 @@ socket.on('genre_selection_completed', genre => {
 
 });
 
-
+// Server --> client; handle a new round beginning
 socket.on('new_round', (music_data, player_data, first_round) => {
-    console.log(music_data);
     render_next_round(music_data, player_data, first_round);
 });
 
+// Server --> client; handle data that shows if a player's selection was correct as deemed by the server
 socket.on('select', (correct) => {
     player_is_correct = correct;
 });
 
+// Server --> client; if all players have selected their choices, show if answer are correct or not
 socket.on('show_results', lobby => {
     if (global_selected_card) {
         if (player_is_correct) {
@@ -125,15 +138,18 @@ socket.on('show_results', lobby => {
     show_leaderboard(lobby);
 })
 
+// Server --> client; handle game ending
 socket.on('end_game', lobby => {
     end_buttons.classList.remove('d-none');
     end_buttons.style.opacity = '100';
 });
 
+// Server --> client; handle timer updates
 socket.on('update_time', seconds => {
     timer.innerText = "Time: " + seconds;
 });
 
+// Auxillary function that adds a player to lobby GUI and modifies DOM 
 function add_player_to_lobby(player) {
     let entry = document.createElement('p');
     entry.classList.add('list-group-item');
@@ -146,6 +162,7 @@ function add_player_to_lobby(player) {
     joined_players_div.appendChild(entry);
 }
 
+// Auxillary function that removes a player to lobby GUI and modifies DOM 
 function remove_player_from_lobby(player) {
     const player_elements = joined_players_div.children;
 
@@ -156,16 +173,19 @@ function remove_player_from_lobby(player) {
     }
 }
 
-
+// Auxillary function that updates leaderboard with players and scores
 function show_leaderboard(lobby, end_game) {
     let all_players = lobby.players;
 
+    // Clear old leaderboard
     while (scoreboard.firstChild) {
         scoreboard.removeChild(scoreboard.firstChild);
     }
 
+    // FIX THIS SO ITS SORTED BY SCORE
     all_players.sort();
 
+    // Add each leaderboard element
     for (let i = 0; i < all_players.length; i++) {
         let list_element = document.createElement('li');
         let name = document.createElement('p');
@@ -183,9 +203,11 @@ function show_leaderboard(lobby, end_game) {
     }
 
     setTimeout(function () {
+        // Hide leaderboard
         round_div.style.opacity = '0';
         score_div.classList.remove('d-none');
 
+        // Display round number
         setTimeout(function () {
             round_div.classList.add('d-none');
             score_div.style.opacity = '1';
@@ -199,21 +221,21 @@ function show_leaderboard(lobby, end_game) {
     }, 1000);
 }
 
-function update_time(seconds) {
-
-}
-
+// After leaderboard has been updated and shown, render next round
 function render_next_round(music_data, player_data, first_round) {
-
+    // Remove old music choices
     while (player_choices_div.firstChild) {
         player_choices_div.removeChild(player_choices_div.firstChild);
     }
 
     play_button.value = "false";
+
+    // Set the song to be displayed
     set_random_song(music_data[0].track);
+    // Add new music choices
     populate_cards(music_data);
 
-
+    // Show the round
     setTimeout(function () {
         round_number_div.classList.remove('d-none');
         setTimeout(function () {
@@ -233,16 +255,19 @@ function render_next_round(music_data, player_data, first_round) {
     }, 1000);
 }
 
-// replace player_data with song_data. 
+// Add new music choices given 4 random songs
 function populate_cards(music_data) {
-    shuffle(music_data);
-
     let current_row;
     let index = 0;
+
+    // Shuffle songs so that each player has a different arrangement of choices
+    shuffle(music_data);
+
+    // Add each song to the DOM
     for (let i = 0; i < 4; i++) {
         let song = music_data[i];
 
-
+        // Create two columns of songs. This allows for more than 4 choices to be shown in the future. 
         if ((index % 2) === 0) {
             current_row = document.createElement("div");
             current_row.classList.add('row', 'mt-3');
@@ -275,6 +300,7 @@ function populate_cards(music_data) {
         index++;
     }
 
+    // Add listeners to each card
     let player_cards = document.querySelectorAll('#player_card');
     for (let index = 0; index < 4; index++) {
         let selected_card = player_cards[index];
@@ -292,15 +318,15 @@ function populate_cards(music_data) {
                 global_selected_card = selected_card;
 
                 setTimeout(function () {
-                    console.log("SENDING " + selected_card.innerText)
+                    // Send player card selection to server to be evaluated
                     socket.emit('ready', selected_card.innerText);
-
                 }, 1000);
             }
         });
     }
 }
 
+// Handle the case where a player changes their mind 
 function remove_selection(player_card) {
     let text = player_card.firstChild;
     player_card.classList.remove('bg-light', 'border-dark');
@@ -310,13 +336,14 @@ function remove_selection(player_card) {
     player_card.value = "false";
 }
 
+// Update the selected song in DOM
 function set_random_song(music_data) {
     album_image.setAttribute('src', music_data.album.images[0].url);
     song_title.innerText = "Rel. " + music_data.album.release_date.substring(0, 4);
     song_url = music_data.preview_url;
 }
 
-// Fishker-Yates Unbiased Shuffle Algo
+// Fishker-Yates Unbiased Shuffle Algorithm
 function shuffle(array) {
     let currentIndex = array.length, randomIndex;
 
@@ -335,6 +362,7 @@ function shuffle(array) {
     return array;
 }
 
+// Event listener for the play button
 play_button.addEventListener("click", () => {
     myAudio.setAttribute('src', song_url);
 
@@ -347,16 +375,17 @@ play_button.addEventListener("click", () => {
     }
 })
 
-
+// Event listener for the start button in lobby page
 start_game_button.addEventListener("click", () => {
     socket.emit('startgame', 'true');
     console.log("emits");
 });
 
-start_game_button2.addEventListener("click", () => {
-    socket.emit('startgame', 'true');
-});
+// start_game_button2.addEventListener("click", () => {
+//     socket.emit('startgame', 'true');
+// });
 
+// Event listener for the genre selection presets
 genre_selection.addEventListener("click", function (e) {
     if (e.target.type === "button") {
         genre_custom_input[0].value = e.target.innerText;
@@ -364,6 +393,7 @@ genre_selection.addEventListener("click", function (e) {
     }
 });
 
+// Event listener for the genre custom input
 genre_custom_input[1].addEventListener("click", () => {
     console.log(genre_custom_input[0].value);
     socket.emit('genre_selected', genre_custom_input[0].value);
