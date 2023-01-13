@@ -6,6 +6,7 @@ const spotify_api = new SpotifyWebApi();
 
 // Add a user's access_token and respective ip_address
 function add_spotify(access_token, ip_address) {
+    console.log("ADDING API")
     spotify_api.setAccessToken(access_token);
 
     spotify_api.getMe()
