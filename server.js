@@ -1,7 +1,7 @@
 //https://www.youtube.com/watch?v=Bk90lT6ne3g
 //https://www.youtube.com/watch?v=Bk90lT6ne3g
 
-let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
+let local_ip = "http://localhost:8888/";        // This is the IP of the machine this server is running on
 
 const express = require('express');
 const path = require('path');
@@ -14,6 +14,8 @@ const io = socketio(server)
 
 const ready_players = new Set();
 const total_rounds = 15;
+
+const IP = require('ip');
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname, 'public')));
@@ -32,6 +34,7 @@ app.set('views', path.join(__dirname, '/views'));
 io.on('connection', socket => {
     var socketId = socket.id;
     var clientIp = socket.request.connection.remoteAddress;
+
 
     console.log("connected!");
 
@@ -281,7 +284,11 @@ app.get('/callback', (req, res) => {
     const code = req.query.code;
     const state = req.query.state;
     const ip = req.socket.remoteAddress;
+
     console.log('added ip ' + ip)
+
+    const ipAddress = IP.address();
+    console.log('addedip2 ' + ipAddress);
 
     if (error) {
         console.error('Callback Error:', error);

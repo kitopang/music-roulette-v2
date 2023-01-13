@@ -397,7 +397,6 @@ music_box.addEventListener("click", () => {
 start_game_button.addEventListener("click", () => {
     socket.emit('startgame', 'true');
     console.log("emits");
-    fasdflk();
 });
 
 // start_game_button2.addEventListener("click", () => {
