@@ -2,7 +2,7 @@
 //https://www.youtube.com/watch?v=Bk90lT6ne3g
 
 //let local_ip = "http://localhost:8888/";        // This is the IP of the machine this server is running on
-let local_ip = "http://localhost:https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
+let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
 
 const express = require('express');
 const path = require('path');
