@@ -7,6 +7,7 @@ const express = require('express');
 const path = require('path');
 const http = require('http');
 const socketio = require('socket.io');
+const ngrok = require('ngrok');
 
 const app = express();
 const server = http.createServer(app);
@@ -20,7 +21,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'views')));
 const { player_join, player_leave, get_player } = require('./public/js/players');
 const { add_spotify, get_spotify, generate_songs } = require('./public/js/spotify');
-const { join_lobby, lobby_leave, get_lobby } = require('./public/js/lobby');
+const { join_lobby, lobby_leave, get_lobby, sort_players_by_score } = require('./public/js/lobby');
 
 const PORT = process.env.PORT || 3000;
 
@@ -110,29 +111,32 @@ io.on('connection', socket => {
     // If a user selects a song choice, do stuff
     socket.on('ready', (song_selection) => {
         let player = get_player(socket.id);
+        console.log("PLAYER INFO --------")
+        console.log(player);
         let lobby = get_lobby(player.lobby_code);
 
         // Increase number of ready players 
         lobby.ready_players++;
 
         // If song selection matches the correct song, then emit true to client 
-        console.log(lobby.correct_song.track.name.trim());
-        console.log(song_selection.trim());
+
         if (song_selection.trim() === lobby.correct_song.track.name.trim()) {
             console.log("good");
             // Calculate score using a simliar algorithim that Kahoot uses
             let score = Math.floor((1 - ((lobby.time_elapsed / lobby.max_time) / 2)) * 1000);
             player.score += score;
-            socket.emit('select', true);
+            socket.emit('select', true, lobby.correct_song.track.name);
         } else {
             // If song selection doesn't match current song, then emit false to client
             player.score += 0;
-            socket.emit('select', false);
+            socket.emit('select', false, lobby.correct_song.track.name);
         }
 
         // If all players have chosen a song, then continue to next round
         if (lobby.ready_players === lobby.players.length) {
-            initiate_next_round(lobby, player, socket);
+            setTimeout(function () {
+                initiate_next_round(lobby, player, socket);
+            }, 800);
         }
     });
 })
@@ -191,6 +195,8 @@ function initiate_next_round(lobby, player, socket) {
     lobby.time_elapsed = 0;
 
     // Signal clients to show the scoreboard 
+    // Sort players by score so the highest score appears at top of scoreboard
+    sort_players_by_score(lobby);
     io.in(player.lobby_code).emit('show_results', lobby);
 
     setTimeout(function () {

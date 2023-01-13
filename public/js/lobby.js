@@ -45,10 +45,21 @@ function lobby_leave(lobby, player) {
             lobbies.splice(lobby_index, 1)
         }
     }
+
+    console.log(lobbies);
+}
+
+function sort_players_by_score(lobby) {
+    lobby.players.sort(comparator);
+}
+
+function comparator(a, b) {
+    return b.score - a.score;
 }
 
 module.exports = {
     join_lobby,
     get_lobby,
     lobby_leave,
+    sort_players_by_score
 };

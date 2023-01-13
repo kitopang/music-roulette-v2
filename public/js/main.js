@@ -10,6 +10,7 @@ const album_image = document.querySelector('#album_image');
 const song_title = document.querySelector('#song_title');
 const song_artist = document.querySelector('#song_artist');
 const play_button = document.querySelector('#play_button');
+const music_box = document.querySelector('#music_box');
 const myAudio = document.createElement('audio');
 const score_div = document.querySelector('#score');
 const round_num = document.querySelector('#round_num');
@@ -27,6 +28,8 @@ const socket = io();
 let song_url;
 let chosen_player;
 let global_selected_card;
+let correct_card;
+let all_cards;
 let player_is_correct;
 
 // Get lobby code from URL query string
@@ -115,21 +118,38 @@ socket.on('new_round', (music_data, player_data, first_round) => {
 });
 
 // Server --> client; handle data that shows if a player's selection was correct as deemed by the server
-socket.on('select', (correct) => {
+socket.on('select', (correct, card_value) => {
     player_is_correct = correct;
+
+    // Find the correct card if you chose a wrong option
+    for (let i = 0; i < all_cards.length; i++) {
+        if (all_cards[i].innerText === card_value) {
+            correct_card = all_cards[i];
+            console.log(correct_card.innerText);
+        }
+    }
 });
 
 // Server --> client; if all players have selected their choices, show if answer are correct or not
 socket.on('show_results', lobby => {
     if (global_selected_card) {
         if (player_is_correct) {
+            // Display correct choice
             global_selected_card.classList.remove("bg-light");
             global_selected_card.classList.add("bg-success");
         } else {
+            // Display wrong choice
             global_selected_card.classList.remove("bg-light");
             global_selected_card.classList.add("bg-danger");
+
+            // Display correct choice
+            correct_card.classList.remove("bg-transparent");
+            correct_card.classList.add("bg-success");
         }
     }
+
+    all_cards = undefined;
+    correct_card = undefined;
     global_selected_card = undefined;
     player_is_correct = undefined;
 
@@ -181,9 +201,6 @@ function show_leaderboard(lobby, end_game) {
     while (scoreboard.firstChild) {
         scoreboard.removeChild(scoreboard.firstChild);
     }
-
-    // FIX THIS SO ITS SORTED BY SCORE
-    all_players.sort();
 
     // Add each leaderboard element
     for (let i = 0; i < all_players.length; i++) {
@@ -302,6 +319,7 @@ function populate_cards(music_data) {
 
     // Add listeners to each card
     let player_cards = document.querySelectorAll('#player_card');
+    all_cards = player_cards;
     for (let index = 0; index < 4; index++) {
         let selected_card = player_cards[index];
         let text = selected_card.firstChild;
@@ -363,7 +381,7 @@ function shuffle(array) {
 }
 
 // Event listener for the play button
-play_button.addEventListener("click", () => {
+music_box.addEventListener("click", () => {
     myAudio.setAttribute('src', song_url);
 
     if (play_button.value === "false") {
