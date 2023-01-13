@@ -22,6 +22,7 @@ function add_spotify(access_token, ip_address) {
 
 // Return a spotify object given a client's ip address
 function get_spotify(ip_address) {
+    console.log(spotify_data);
     return spotify_data.find(spotify_item => spotify_item.ip_address === ip_address);
 }
 
