@@ -328,6 +328,4 @@ app.get('/callback', (req, res) => {
 });
 
 
-server.listen(8888, () => {
-    console.log("Open on port: " + PORT)
-})
+server.listen(process.env.PORT || 8888)
