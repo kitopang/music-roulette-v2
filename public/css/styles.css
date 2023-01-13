@@ -97,10 +97,6 @@
     background-color: gray;
 }
 
-body {
-    overflow: hidden;
-
-}
 
 #main {
     background-image: url('spot2.jpg');
@@ -111,4 +107,11 @@ body {
 #score {
     opacity: 0;
     transition: opacity .5s;
+}
+
+.form-control::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgb(199, 199, 199);
+    opacity: 1;
+    /* Firefox */
 }
