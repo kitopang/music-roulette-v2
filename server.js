@@ -115,7 +115,9 @@ io.on('connection', socket => {
 
         // If song selection matches the correct song, then emit true to client 
         // instead of username, do lobby.music_array[0] === username.trim()
-        if (song_selection.trim() === lobby.four_random_songs[0].track.name.trim()) {
+        console.log(lobby.correct_song.track.name.trim());
+        console.log(song_selection.trim());
+        if (song_selection.trim() === lobby.correct_song.track.name.trim()) {
             console.log("good");
             // Calculate score using a simliar algorithim that Kahoot uses
             let score = Math.floor((1 - ((lobby.time_elapsed / lobby.max_time) / 2)) * 1000);
@@ -140,12 +142,14 @@ io.on('connection', socket => {
 function game_timer(lobby, socket) {
     let seconds = 0;
     let player = get_player(socket.id);
-    let four_random_songs = choose_random_song(lobby);
-    lobby.four_random_songs = four_random_songs;
-    let first_round = lobby.current_round === 0
 
     // Choose a random song that players have to guess
-    console.log(four_random_songs);
+    let four_random_songs = choose_random_song(lobby);
+    lobby.four_random_songs = four_random_songs;
+    lobby.correct_song = four_random_songs[0];
+
+    let first_round = lobby.current_round === 0
+
 
     // Base case: the max number of rounds is played. 
     if (lobby.current_round === lobby.max_rounds) {
@@ -190,7 +194,7 @@ function initiate_next_round(lobby, player, socket) {
     setTimeout(function () {
         // Recursive call -- run next round after a few seconds 
         game_timer(lobby, socket);
-    }, 3000);
+    }, 2500);
 }
 
 // Choose a random song by finding a random index in player and song lists

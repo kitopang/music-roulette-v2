@@ -99,6 +99,7 @@ socket.on('genre_selection_completed', genre => {
 
 
 socket.on('new_round', (music_data, player_data, first_round) => {
+    console.log(music_data);
     render_next_round(music_data, player_data, first_round);
 });
 
@@ -183,11 +184,16 @@ function show_leaderboard(lobby, end_game) {
 
     setTimeout(function () {
         round_div.style.opacity = '0';
+        score_div.classList.remove('d-none');
+
         setTimeout(function () {
             round_div.classList.add('d-none');
-            score_div.classList.remove('d-none');
             score_div.style.opacity = '1';
             setTimeout(function () {
+                score_div.style.opacity = '0';
+                setTimeout(function () {
+                    score_div.classList.add('d-none');
+                }, 1000);
             }, 1000);
         }, 1000);
     }, 1000);
@@ -198,21 +204,19 @@ function update_time(seconds) {
 }
 
 function render_next_round(music_data, player_data, first_round) {
-    round_div.classList.add('d-none');
-
 
     while (player_choices_div.firstChild) {
         player_choices_div.removeChild(player_choices_div.firstChild);
     }
 
     play_button.value = "false";
-    populate_cards(music_data);
     set_random_song(music_data[0].track);
+    populate_cards(music_data);
 
 
-    if (first_round) {
+    setTimeout(function () {
+        round_number_div.classList.remove('d-none');
         setTimeout(function () {
-            round_number_div.classList.remove('d-none');
             round_number_div.style.opacity = '1';
             setTimeout(function () {
                 round_number_div.style.opacity = '0';
@@ -223,38 +227,21 @@ function render_next_round(music_data, player_data, first_round) {
                         round_div.style.opacity = '1';
                     }, 500)
                 }, 500)
-            }, 500);
-        }, 800)
-    } else {
-        setTimeout(function () {
-            score_div.style.opacity = 0;
-            setTimeout(function () {
-                score_div.classList.add('d-none');
-                round_number_div.classList.remove('d-none');
-                round_number_div.style.opacity = '1';
-                setTimeout(function () {
-                    round_number_div.style.opacity = '0';
-                    setTimeout(function () {
-                        round_number_div.classList.add('d-none');
-                        round_div.classList.remove('d-none');
-                        setTimeout(function () {
-                            round_div.style.opacity = '1';
-                        }, 500)
-                    }, 500)
-                }, 1000);
             }, 1000);
-        }, 1000);
-    }
+        }, 500);
+
+    }, 1000);
 }
 
 // replace player_data with song_data. 
 function populate_cards(music_data) {
+    shuffle(music_data);
 
     let current_row;
     let index = 0;
     for (let i = 0; i < 4; i++) {
         let song = music_data[i];
-        console.log(song);
+
 
         if ((index % 2) === 0) {
             current_row = document.createElement("div");
@@ -327,6 +314,25 @@ function set_random_song(music_data) {
     album_image.setAttribute('src', music_data.album.images[0].url);
     song_title.innerText = "Rel. " + music_data.album.release_date.substring(0, 4);
     song_url = music_data.preview_url;
+}
+
+// Fishker-Yates Unbiased Shuffle Algo
+function shuffle(array) {
+    let currentIndex = array.length, randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+    }
+
+    return array;
 }
 
 play_button.addEventListener("click", () => {

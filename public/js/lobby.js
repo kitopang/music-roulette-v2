@@ -6,7 +6,7 @@ function join_lobby(code, player, max_rounds) {
     if (existing_lobby) {
         existing_lobby.players.push(player);
     } else {
-        const lobby = { code, info: undefined, interval: undefined, players: [], ready_players: 0, current_round: 0, max_rounds, music_array: [], time_elapsed: 0, max_time: 30, genre: undefined, four_random_songs: [], visited_songs: new Set() };
+        const lobby = { code, info: undefined, interval: undefined, players: [], ready_players: 0, current_round: 0, max_rounds, music_array: [], time_elapsed: 0, max_time: 30, genre: undefined, four_random_songs: [], visited_songs: new Set(), correct_song: undefined };
         lobby.players.push(player);
         lobbies.push(lobby);
     }
