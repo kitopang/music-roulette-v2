@@ -70,15 +70,7 @@ socket.emit('join_lobby', lobby.code, user_ip);
 
 // Server --> client; tells client to add a player to lobby GUI
 socket.on('join_lobby', player => {
-    console.log("hi1");
     add_player_to_lobby(player);
-    console.log("lobby_div");
-    lobby_div.classList.remove("d-none");
-    console.log("remove d-none")
-    setTimeout(function () {
-        console.log("incr opacity")
-        lobby_div.style.opacity = '1';
-    }, 500);
 })
 
 // Client --> server; tells server to return all the existing players in the lobby
@@ -89,6 +81,11 @@ socket.on('initialize_lobby', players => {
     for (player of players) {
         add_player_to_lobby(player);
     }
+
+    lobby_div.classList.remove("d-none");
+    setTimeout(function () {
+        lobby_div.style.opacity = '1';
+    }, 500);
 })
 
 socket.on('error', e => {

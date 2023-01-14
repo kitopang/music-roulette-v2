@@ -65,7 +65,7 @@ io.on('connection', socket => {
 
             // Convey player join information to client side
             socket.to(player.lobby_code).emit('message', spotify_item.username + ' has joined the lobby');
-            //socket.to(player.lobby_code).emit('join_lobby', player);
+            socket.to(player.lobby_code).emit('join_lobby', player);
         } catch (e) {
             socket.emit('error', e)
             console.log("----------- An error has been caught: -----------")
