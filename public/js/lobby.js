@@ -23,7 +23,7 @@ function join_lobby(code, player, max_rounds) {
 
 // Return lobby object given its code
 function get_lobby(code) {
-    return lobbiies.get(code);
+    return lobbies.get(code);
 }
 
 // Remove player form lobby if they leave
