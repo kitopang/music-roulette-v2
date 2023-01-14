@@ -1,5 +1,5 @@
 #lobby {
-    opacity: 100;
+    opacity: 0;
     transition: opacity .5s;
 }
 

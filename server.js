@@ -6,6 +6,7 @@
 
 
 //let local_ip = "http://localhost:8888/";        // This is the IP of the machine this server is running on
+//let local_ip = "http://192.168.0.104:8888/"
 let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
 
 const express = require('express');
@@ -21,6 +22,7 @@ const ready_players = new Set();
 const total_rounds = 15;
 
 const IP = require('ip');
+
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname, 'public')));
@@ -51,6 +53,7 @@ io.on('connection', socket => {
     // Handle a player joining a game lobby
     socket.on('join_lobby', (code, user_ip) => {
         try {
+            console.log(user_ip);
             const spotify_item = get_spotify(user_ip);
             const player = player_join(socket.id, spotify_item.username, user_ip, code, spotify_item.access_token, 0, undefined);
 

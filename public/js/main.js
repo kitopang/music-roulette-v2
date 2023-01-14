@@ -71,6 +71,10 @@ socket.emit('join_lobby', lobby.code, user_ip);
 // Server --> client; tells client to add a plyer to lobby GUI
 socket.on('join_lobby', player => {
     add_player_to_lobby(player);
+    lobby_div.classList.remove("d-none");
+    setTimeout(function () {
+        lobby_div.style.opacity = '1';
+    }, 500);
 })
 
 // Client --> server; tells server to return all the existing players in the lobby
