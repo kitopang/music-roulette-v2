@@ -78,8 +78,6 @@ io.on('connection', socket => {
         let player = get_player(socket.id);
 
         if (player) {
-            let lobby = get_lobby(player.lobby_code);
-
             // Let lobby know that player has left 
             socket.to(player.lobby_code).emit('disconnect_player', player);
             // Remove player from socket.io lobby
@@ -87,7 +85,7 @@ io.on('connection', socket => {
 
             // Remove player from lobby and player lists 
             spotify_leave(player.ip_address);
-            lobby_leave(lobby, player)
+            lobby_leave(player.lobby_code, player)
             player_leave(socket.id);
         }
     });

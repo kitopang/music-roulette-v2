@@ -1,4 +1,4 @@
-const lobbies = [];
+const lobbies = new Map();
 
 // Add a player to a lobby
 function join_lobby(code, player, max_rounds) {
@@ -14,19 +14,21 @@ function join_lobby(code, player, max_rounds) {
         // visited_sogns --> holds all songs that have already been selected as the answer to prevent duplicates from occuring
         // interval --> holds the timer object that is unique to each lobby
         // correct song --> holds the correct song object that will be compared against player answers
-        const lobby = { code, info: undefined, interval: undefined, players: [], ready_players: 0, current_round: 0, max_rounds, music_array: [], time_elapsed: 0, max_time: 30, genre: undefined, four_random_songs: [], visited_songs: new Set(), correct_song: undefined };
+        const lobby = { info: undefined, interval: undefined, players: [], ready_players: 0, current_round: 0, max_rounds, music_array: [], time_elapsed: 0, max_time: 30, genre: undefined, four_random_songs: [], visited_songs: new Set(), correct_song: undefined };
         lobby.players.push(player);
-        lobbies.push(lobby);
+
+        lobbies.set(code, lobby)
     }
 }
 
 // Return lobby object given its code
 function get_lobby(code) {
-    return lobbies.find(lobby => lobby.code === code);
+    return lobbiies.get(code);
 }
 
 // Remove player form lobby if they leave
-function lobby_leave(lobby, player) {
+function lobby_leave(code, player) {
+    const lobby = get_lobby(code);
     const index = lobby.players.indexOf(player);
 
     // Remove player from player array within libby
@@ -38,14 +40,10 @@ function lobby_leave(lobby, player) {
 
     // Delete entire lobby if it's empty
     if (lobby.players.length === 0) {
-        let lobby_index = lobbies.indexOf(lobby);
-
-        if (lobby_index >= 0) {
-            lobbies.splice(lobby_index, 1)
-        }
+        lobbies.delete(code);
     }
 
-    console.log(lobbies);
+    console.log("Open lobbies: " + lobbies);
 }
 
 function sort_players_by_score(lobby) {

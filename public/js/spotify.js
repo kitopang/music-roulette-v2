@@ -1,5 +1,6 @@
 const SpotifyWebApi = require("spotify-web-api-node");
 
+// Map data strucutre format --> ip_address : spotify_itme
 const spotify_data = new Map();
 
 const spotify_api = new SpotifyWebApi();
@@ -24,7 +25,7 @@ function add_spotify(access_token, ip_address) {
 function get_spotify(ip_address) {
     return spotify_data.get(ip_address);
 }
-
+// Remove a spotify object given a client's ip address
 function spotify_leave(ip_address) {
     spotify_data.delete(ip_address);
 }
