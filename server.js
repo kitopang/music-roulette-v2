@@ -1,8 +1,8 @@
 //https://www.youtube.com/watch?v=Bk90lT6ne3g
 //https://www.youtube.com/watch?v=Bk90lT6ne3g
 
-//let local_ip = "http://192.168.0.104:8888/";        // This is the IP of the machine this server is running on
-let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
+let local_ip = "http://localhost:8888/";        // This is the IP of the machine this server is running on
+//let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
 
 const express = require('express');
 const path = require('path');
@@ -31,6 +31,12 @@ const PORT = process.env.PORT || 3000;
 app.engine('html', require('ejs').renderFile);
 app.set('views', path.join(__dirname, '/views'));
 
+
+app.get('/lobby.html', (req, res) => {
+    console.log("joined lobby!!!");
+});
+
+
 // Handle a user entering the game homescreen
 io.on('connection', socket => {
     var socketId = socket.id;
@@ -39,6 +45,8 @@ io.on('connection', socket => {
     console.log("socketip: " + clientIp);
 
     console.log("connected!");
+
+
 
 
     // ***** THE FOLLOWING HANDLES THE LOBBY SYSTEM ***** //
@@ -289,8 +297,17 @@ app.get('/callback', (req, res) => {
 
     console.log('express ip' + ip)
 
-    const ipAddress = IP.address();
-    console.log('third party ip ' + ipAddress);
+
+
+    var ipAddr = req.headers["x-forwarded-for"];
+    if (ipAddr) {
+        var list = ipAddr.split(",");
+        ipAddr = list[list.length - 1];
+    } else {
+        ipAddr = req.socket.remoteAddress;
+    }
+
+    console.log('third party ip ' + ipAddr);
 
     if (error) {
         console.error('Callback Error:', error);
