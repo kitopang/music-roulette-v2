@@ -23,7 +23,30 @@
         <h1 class="display-5 text-light mb-5 px-5 fw-bold d-none" id="time">Time:</h1>
         <h1 class="display-5 text-light mb-5 px-5 fw-bold d-none" id="category_header">Choose your genre:</h1>
 
+        <!---------------- Error Modal ---------------->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">An Error Has Occured, Please Reload</h1>
+                    </div>
+                    <div class="modal-body" id="modal_text">
+                    </div>
+                    <div class="modal-footer">
+                        <a href="/spotifylogin" class="">
+                            <button type="button" class="btn btn-primary">Reload Application</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <button type="button" id="modal_button" class="btn btn-primary d-none" data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop">
+        </button>
+
+        <!---------------- Joined Players list ---------------->
         <div class="" id="lobby">
             <div class="justify-content-center mx-auto align-items-center d-flex">
                 <ul class="list-group list-group-flush bg-transparent col-md-7 col-10" id="">
@@ -47,8 +70,9 @@
                         &gt;</button>
                 </div>
             </div>
-
         </div>
+
+        <!---------------- Genre Selection ---------------->
 
         <div class="container d-none" id="genre_div">
             <div id="genre_selection">
@@ -121,11 +145,13 @@
             </div>
         </div>
 
+        <!---------------- Round Number ---------------->
 
         <div class="d-flex justify-content-center align-items-center d-none" id="round_number">
             <h1 class="display-5 text-light mt-5 pt-5 px-5 fw-bold" id="round_num">Round 1/10</h1>
         </div>
 
+        <!---------------- Music Player & Selection Cards ---------------->
         <div class="d-flex justify-content-center align-items-center d-none row" id="round">
             <div class="bg-transparent border border-light col-11 col-lg-7 rounded row p-1 p-md-4" id="music_box">
                 <div class="col-lg-3 col-md-4 col-5"><img id="album_image" src="album-placeholder.png"
@@ -146,6 +172,7 @@
             </div>
         </div>
 
+        <!---------------- Scoreboard ---------------->
         <div class="" id="score">
             <div class="justify-content-center mx-auto align-items-center d-flex">
                 <ul class="list-group list-group-flush bg-transparent col-md-7 col-10" id="">
@@ -163,6 +190,8 @@
                     </div>
                 </ul>
             </div>
+
+            <!---------------- End Game ---------------->
             <div class="d-flex justify-content-center d-none" id="end_buttons">
                 <div class="justify-content-between d-flex col-md-7 col-10 mt-3">
                     <button type="button" class="btn btn-outline-light fw-bold" id="" onclick="history.back()">&lt;

@@ -23,6 +23,8 @@ const genre_div = document.querySelector('#genre_div');
 const genre_selection = document.querySelector('#genre_selection');
 const genre_custom_input = document.querySelectorAll('#genre_custom_input');
 
+const modal_button = document.querySelector('#modal_button');
+
 const socket = io();
 
 let song_url;
@@ -80,6 +82,10 @@ socket.on('initialize_lobby', players => {
         add_player_to_lobby(player);
     }
 })
+
+socket.on('error', e => {
+    modal_button.click();
+});
 
 // Server --> client; game has started, so show genre page
 socket.on('startgame', start => {
