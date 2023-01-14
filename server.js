@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'views')));
 const { player_join, player_leave, get_player } = require('./public/js/players');
-const { add_spotify, get_spotify, generate_songs } = require('./public/js/spotify');
+const { add_spotify, get_spotify, spotify_leave, generate_songs } = require('./public/js/spotify');
 const { join_lobby, lobby_leave, get_lobby, sort_players_by_score } = require('./public/js/lobby');
 
 const PORT = process.env.PORT || 3000;

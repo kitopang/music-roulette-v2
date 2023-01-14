@@ -75,6 +75,7 @@ function generate_songs(ip_address, lobby) {
 
 module.exports = {
     add_spotify,
+    spotify_leave,
     get_spotify,
     generate_songs
 };
