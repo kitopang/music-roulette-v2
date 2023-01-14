@@ -68,11 +68,13 @@ socket.on('disconnect_player', player => {
 // Client --> server; tells server that a new player has joined
 socket.emit('join_lobby', lobby.code, user_ip);
 
-// Server --> client; tells client to add a plyer to lobby GUI
+// Server --> client; tells client to add a player to lobby GUI
 socket.on('join_lobby', player => {
     add_player_to_lobby(player);
     lobby_div.classList.remove("d-none");
+    console.log("remove d-none")
     setTimeout(function () {
+        console.log("incr opacity")
         lobby_div.style.opacity = '1';
     }, 500);
 })
