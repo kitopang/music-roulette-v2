@@ -31,6 +31,7 @@ let global_selected_card;
 let correct_card;
 let all_cards;
 let player_is_correct;
+let user_ip;
 
 // Get lobby code from URL query string
 const lobby = Qs.parse(location.search, {
@@ -42,6 +43,7 @@ function httpGet() {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", 'https://api.ipify.org', false); // false for synchronous request
     xmlHttp.send(null);
+    user_ip = xmlHttp.responseText;
     console.log("http ip" + xmlHttp.responseText);
 }
 
@@ -62,7 +64,7 @@ socket.on('disconnect_player', player => {
 })
 
 // Client --> server; tells server that a new player has joined
-socket.emit('join_lobby', lobby.code);
+socket.emit('join_lobby', lobby.code, user_ip);
 
 // Server --> client; tells client to add a plyer to lobby GUI
 socket.on('join_lobby', player => {

@@ -40,19 +40,16 @@ app.get('/lobby.html', (req, res) => {
 // Handle a user entering the game homescreen
 io.on('connection', socket => {
     var socketId = socket.id;
-    var clientIp = socket.request.connection.remoteAddress;
-
-    console.log("socketip: " + clientIp);
 
     console.log("connected!");
 
 
 
-
     // ***** THE FOLLOWING HANDLES THE LOBBY SYSTEM ***** //
     // Handle a player joining a game lobby
-    socket.on('join_lobby', (code) => {
-        const spotify_item = get_spotify(clientIp);
+    socket.on('join_lobby', (code, user_ip) => {
+        console.log("user_ip: " + user_ip);
+        const spotify_item = get_spotify(user_ip);
         const player = player_join(socket.id, spotify_item.username, code, spotify_item.access_token, 0, undefined);
 
 
@@ -293,21 +290,18 @@ app.get('/callback', (req, res) => {
     const error = req.query.error;
     const code = req.query.code;
     const state = req.query.state;
-    const ip = req.ip;
+    let ip
 
-    console.log('express ip' + ip)
-
-
-
+    // Get real client ID using headers (circumvent Heroku rerouting)
     var ipAddr = req.headers["x-forwarded-for"];
     if (ipAddr) {
         var list = ipAddr.split(",");
-        ipAddr = list[list.length - 1];
+        ip = list[list.length - 1];
     } else {
-        ipAddr = req.socket.remoteAddress;
+        ip = req.socket.remoteAddress;
     }
 
-    console.log('third party ip ' + ipAddr);
+    console.log('client ip: ' + ip);
 
     if (error) {
         console.error('Callback Error:', error);
