@@ -170,7 +170,7 @@ function game_timer(lobby, socket) {
     let first_round = lobby.current_round === 0
 
     // Base case: the max number of rounds is played. 
-    if (lobby.current_round === lobby.max_rounds) {
+    if (lobby.current_round >= lobby.max_rounds - 1) {
         io.in(player.lobby_code).emit('end_game', lobby)
         return;
     }
