@@ -1,6 +1,6 @@
 const SpotifyWebApi = require("spotify-web-api-node");
 
-const spotify_data = [];
+const spotify_data = new Map();
 
 const spotify_api = new SpotifyWebApi();
 
@@ -13,8 +13,8 @@ function add_spotify(access_token, ip_address) {
         .then(function (data) {
             console.log('Some information about the authenticated user', data.body);
             // Create a spotify object with a person's username, ip address, and their access_token
-            spotify_item = { username: data.body.id, ip_address, access_token }
-            spotify_data.push(spotify_item);
+            spotify_item = { username: data.body.id, access_token };
+            spotify_data.set(ip_address, spotify_item);
         }, function (err) {
             console.log('Something went wrong!', err);
         });
@@ -22,19 +22,11 @@ function add_spotify(access_token, ip_address) {
 
 // Return a spotify object given a client's ip address
 function get_spotify(ip_address) {
-    console.log(spotify_data);
-    console.log(ip_address);
-    return spotify_data.find(spotify_item => spotify_item.ip_address === ip_address);
+    return spotify_data.get(ip_address);
 }
 
 function spotify_leave(ip_address) {
-    let spotify_object = get_spotify(ip_address);
-    let index = spotify_data.indexOf(spotify_object);
-
-    if (index >= 0) {
-        spotify_data.splice(index, 1)
-    }
-
+    spotify_data.delete(ip_address);
 }
 
 // Search for a playlist given a genre and return it
