@@ -53,7 +53,6 @@ io.on('connection', socket => {
         try {
             const spotify_item = get_spotify(user_ip);
             const player = player_join(socket.id, spotify_item.username, user_ip, code, spotify_item.access_token, 0, undefined);
-            fasfsad();
 
             // Add player to existing lobby or create a new lobby 
             join_lobby(code, player, 10);
