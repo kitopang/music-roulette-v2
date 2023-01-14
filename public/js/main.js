@@ -427,6 +427,6 @@ genre_selection.addEventListener("click", function (e) {
 // Event listener for the genre custom input
 genre_custom_input[1].addEventListener("click", () => {
     console.log(genre_custom_input[0].value);
-    socket.emit('genre_selected', genre_custom_input[0].value);
+    socket.emit('genre_selected', genre_custom_input[0].value, user_ip);
 });
 

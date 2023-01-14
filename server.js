@@ -99,7 +99,7 @@ io.on('connection', socket => {
     });
 
     // Listen for genre selection by a player
-    socket.on('genre_selected', async (genre) => {
+    socket.on('genre_selected', async (genre, user_ip) => {
         let player = get_player(socket.id);
         let lobby = get_lobby(player.lobby_code);
 
@@ -110,7 +110,7 @@ io.on('connection', socket => {
         io.in(player.lobby_code).emit('genre_selection_completed', genre);
 
         // Generate songs and add it to the lobby's music array. Use await to make async call blocking (not asynchronous) 
-        let generated_songs = await generate_songs(socket.request.connection.remoteAddress, lobby);
+        let generated_songs = await generate_songs(user_ip, lobby);
         lobby.music_array = generated_songs;
 
         // Recursive call to start the rounds 
