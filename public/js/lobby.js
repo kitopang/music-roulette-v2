@@ -29,18 +29,20 @@ function get_lobby(code) {
 // Remove player form lobby if they leave
 function lobby_leave(code, player) {
     const lobby = get_lobby(code);
-    const index = lobby.players.indexOf(player);
+    if (lobby) {
+        const index = lobby.players.indexOf(player);
 
-    // Remove player from player array within libby
-    if (index >= 0) {
-        lobby.players.splice(index, 1);
-    }
+        // Remove player from player array within libby
+        if (index >= 0) {
+            lobby.players.splice(index, 1);
+        }
 
-    clearInterval(lobby.interval);
+        clearInterval(lobby.interval);
 
-    // Delete entire lobby if it's empty
-    if (lobby.players.length === 0) {
-        lobbies.delete(code);
+        // Delete entire lobby if it's empty
+        if (lobby.players.length === 0) {
+            lobbies.delete(code);
+        }
     }
 
     console.log("Open lobbies: " + lobbies);
