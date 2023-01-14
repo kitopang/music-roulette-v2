@@ -1,7 +1,7 @@
 //https://www.youtube.com/watch?v=Bk90lT6ne3g
 //https://www.youtube.com/watch?v=Bk90lT6ne3g
 
-//let local_ip = "http://localhost:8888/";        // This is the IP of the machine this server is running on
+//let local_ip = "http://192.168.0.104:8888/";        // This is the IP of the machine this server is running on
 let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
 
 const express = require('express');
@@ -284,7 +284,7 @@ app.get('/callback', (req, res) => {
     const error = req.query.error;
     const code = req.query.code;
     const state = req.query.state;
-    const ip = req.socket.remoteAddress;
+    const ip = req.ip;
 
     console.log('added ip ' + ip)
 

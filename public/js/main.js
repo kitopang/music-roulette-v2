@@ -37,6 +37,17 @@ const lobby = Qs.parse(location.search, {
     ignoreQueryPrefix: true
 })
 
+
+function httpGet() {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", 'https://api.ipify.org', false); // false for synchronous request
+    xmlHttp.send(null);
+    console.log(xmlHttp.responseText);
+}
+
+httpGet();
+
+
 // Update lobby number DOM element
 lobby_number.innerText = 'Lobby: ' + lobby.code;
 
