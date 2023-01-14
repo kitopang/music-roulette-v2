@@ -36,6 +36,7 @@ io.on('connection', socket => {
     var socketId = socket.id;
     var clientIp = socket.request.connection.remoteAddress;
 
+    console.log("socketip: " + clientIp);
 
     console.log("connected!");
 
@@ -286,10 +287,10 @@ app.get('/callback', (req, res) => {
     const state = req.query.state;
     const ip = req.ip;
 
-    console.log('added ip ' + ip)
+    console.log('express ip' + ip)
 
     const ipAddress = IP.address();
-    console.log('addedip2 ' + ipAddress);
+    console.log('third party ip ' + ipAddress);
 
     if (error) {
         console.error('Callback Error:', error);

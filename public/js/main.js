@@ -42,7 +42,7 @@ function httpGet() {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", 'https://api.ipify.org', false); // false for synchronous request
     xmlHttp.send(null);
-    console.log(xmlHttp.responseText);
+    console.log("http ip" + xmlHttp.responseText);
 }
 
 httpGet();
