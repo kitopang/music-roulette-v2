@@ -27,6 +27,16 @@ function get_spotify(ip_address) {
     return spotify_data.find(spotify_item => spotify_item.ip_address === ip_address);
 }
 
+function spotify_leave(ip_address) {
+    let spotify_object = get_spotify(ip_address);
+    let index = spotify_data.indexOf(spotify_object);
+
+    if (index >= 0) {
+        spotify_data.splice(index, 1)
+    }
+
+}
+
 // Search for a playlist given a genre and return it
 function generate_songs(ip_address, lobby) {
     let spotify_item = get_spotify(ip_address);

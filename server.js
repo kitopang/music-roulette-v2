@@ -52,9 +52,8 @@ io.on('connection', socket => {
     // ***** THE FOLLOWING HANDLES THE LOBBY SYSTEM ***** //
     // Handle a player joining a game lobby
     socket.on('join_lobby', (code, user_ip) => {
-        console.log("user_ip: " + user_ip);
         const spotify_item = get_spotify(user_ip);
-        const player = player_join(socket.id, spotify_item.username, code, spotify_item.access_token, 0, undefined);
+        const player = player_join(socket.id, spotify_item.username, user_ip, code, spotify_item.access_token, 0, undefined);
 
 
         // Add player to existing lobby or create a new lobby 
@@ -62,7 +61,6 @@ io.on('connection', socket => {
 
         // Add player to lobby on socket.io side
         socket.join(player.lobby_code)
-        console.log(player.username);
 
         // Convey player join information to client side
         socket.to(player.lobby_code).emit('message', spotify_item.username + ' has joined the lobby');
@@ -76,7 +74,7 @@ io.on('connection', socket => {
 
     // Handle player disconnection
     socket.on('disconnect', () => {
-        console.log("socket! " + socket.id);
+        console.log("socket disconnect id: " + socket.id);
         let player = get_player(socket.id);
 
         if (player) {
@@ -88,6 +86,7 @@ io.on('connection', socket => {
             socket.leave(player.lobby_code);
 
             // Remove player from lobby and player lists 
+            spotify_leave(player.ip_address);
             lobby_leave(lobby, player)
             player_leave(socket.id);
         }

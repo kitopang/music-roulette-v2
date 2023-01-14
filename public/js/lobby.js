@@ -28,10 +28,9 @@ function get_lobby(code) {
 // Remove player form lobby if they leave
 function lobby_leave(lobby, player) {
     const index = lobby.players.indexOf(player);
-    console.log(index);
 
     // Remove player from player array within libby
-    if (index !== -1) {
+    if (index >= 0) {
         lobby.players.splice(index, 1);
     }
 
@@ -41,7 +40,7 @@ function lobby_leave(lobby, player) {
     if (lobby.players.length === 0) {
         let lobby_index = lobbies.indexOf(lobby);
 
-        if (index >= 0) {
+        if (lobby_index >= 0) {
             lobbies.splice(lobby_index, 1)
         }
     }

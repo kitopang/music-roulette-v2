@@ -1,8 +1,8 @@
 const players = [];
 
 // Handle a player joining a lobby
-function player_join(socket_id, username, lobby_code, access_token, score, correct) {
-    const player = { socket_id, username, lobby_code, access_token, score, correct };
+function player_join(socket_id, username, ip_address, lobby_code, access_token, score, correct) {
+    const player = { socket_id, username, ip_address, lobby_code, access_token, score, correct };
 
     players.push(player);
 
