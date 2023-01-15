@@ -24,6 +24,8 @@ const genre_selection = document.querySelector('#genre_selection');
 const genre_custom_input = document.querySelectorAll('#genre_custom_input');
 
 const modal_button = document.querySelector('#modal_button');
+const player_cards = document.querySelectorAll('#player_card');
+
 
 const socket = io();
 
@@ -84,8 +86,9 @@ socket.on('initialize_lobby', players => {
 
     lobby_div.classList.remove("d-none");
     setTimeout(function () {
+
         lobby_div.style.opacity = '1';
-    }, 500);
+    }, 300);
 })
 
 socket.on('error', e => {
@@ -109,9 +112,9 @@ socket.on('startgame', start => {
             setTimeout(function () {
                 genre_div.style.opacity = '1';
                 category_header.style.opacity = '1';
-            }, 500);
+            }, 300);
             timer.style.opacity = '1';
-        }, 500);
+        }, 300);
     }
 })
 
@@ -130,9 +133,9 @@ socket.on('genre_selection_completed', genre => {
 
         setTimeout(function () {
             timer.style.opacity = '1';
-        }, 500);
+        }, 300);
 
-    }, 500);
+    }, 300);
 
 });
 
@@ -146,9 +149,9 @@ socket.on('select', (correct, card_value) => {
     player_is_correct = correct;
 
     // Find the correct card if you chose a wrong option
-    for (let i = 0; i < all_cards.length; i++) {
-        if (all_cards[i].innerText === card_value) {
-            correct_card = all_cards[i];
+    for (let i = 0; i < player_cards.length; i++) {
+        if (player_cards[i].innerText === card_value) {
+            correct_card = player_cards[i];
             console.log(correct_card.innerText);
         }
     }
@@ -172,7 +175,6 @@ socket.on('show_results', lobby => {
         }
     }
 
-    all_cards = undefined;
     correct_card = undefined;
     global_selected_card = undefined;
     player_is_correct = undefined;
@@ -244,11 +246,11 @@ function show_leaderboard(lobby, end_game) {
     }
 
     setTimeout(function () {
-        // Hide leaderboard
+        // Hide round
         round_div.style.opacity = '0';
         score_div.classList.remove('d-none');
 
-        // Display round number
+        // Display scoreboard
         setTimeout(function () {
             round_div.classList.add('d-none');
             score_div.style.opacity = '1';
@@ -256,8 +258,9 @@ function show_leaderboard(lobby, end_game) {
                 score_div.style.opacity = '0';
                 setTimeout(function () {
                     score_div.classList.add('d-none');
+                    reset_cards();
                 }, 1000);
-            }, 1000);
+            }, 2000);
         }, 1000);
     }, 1000);
 }
@@ -265,9 +268,6 @@ function show_leaderboard(lobby, end_game) {
 // After leaderboard has been updated and shown, render next round
 function render_next_round(music_data, player_data, first_round) {
     // Remove old music choices
-    while (player_choices_div.firstChild) {
-        player_choices_div.removeChild(player_choices_div.firstChild);
-    }
 
     play_button.value = "false";
 
@@ -288,10 +288,10 @@ function render_next_round(music_data, player_data, first_round) {
                     round_div.classList.remove('d-none');
                     setTimeout(function () {
                         round_div.style.opacity = '1';
-                    }, 500)
-                }, 500)
+                    }, 300)
+                }, 300)
             }, 1000);
-        }, 500);
+        }, 300);
 
     }, 1000);
 }
@@ -305,66 +305,21 @@ function populate_cards(music_data) {
     shuffle(music_data);
 
     // Add each song to the DOM
-    for (let i = 0; i < 4; i++) {
-        let song = music_data[i];
-
-        // Create two columns of songs. This allows for more than 4 choices to be shown in the future. 
-        if ((index % 2) === 0) {
-            current_row = document.createElement("div");
-            current_row.classList.add('row', 'mt-3');
-
-            let entry = document.createElement("div");
-            entry.classList.add('border', 'border-light', 'col', 'p-4', 'm-2', 'text-center')
-            entry.setAttribute('id', 'player_card')
-            entry.setAttribute('value', 'false');
-            let text = document.createElement("h4");
-            // Change inner text to song name instead
-            text.innerText = song.track.name;
-            text.classList.add('text-light', 'fw-bold');
-
-            player_choices_div.append(current_row);
-            current_row.append(entry);
-            entry.append(text);
-        } else {
-            let entry = document.createElement("div");
-            entry.classList.add('bg-transparent', 'border', 'border-light', 'col', 'p-4', 'm-2', 'text-center')
-            entry.setAttribute('id', 'player_card');
-            entry.setAttribute('value', 'false');
-            let text = document.createElement("h4");
-            text.innerText = song.track.name;
-            text.classList.add('text-light', 'fw-bold');
-
-            current_row.append(entry);
-            entry.append(text);
-        }
-
-        index++;
-    }
-
-    // Add listeners to each card
-    let player_cards = document.querySelectorAll('#player_card');
-    all_cards = player_cards;
     for (let index = 0; index < 4; index++) {
-        let selected_card = player_cards[index];
-        let text = selected_card.firstChild;
+        console.log(music_data[index].track.name);
+        console.log(player_cards[index].children[0]);
+        player_cards[index].children[0].innerText = music_data[index].track.name;
+    }
+}
 
-        // Listener for player card selection
-        selected_card.addEventListener("click", () => {
-            if (!global_selected_card) {
-                selected_card.classList.remove('bg-transparent', 'border-light');
-                selected_card.classList.add('bg-light', 'border-dark');
-                text.classList.remove('text-light');
-                text.classList.add('text-dark');
-                selected_card.value = "true";
+function reset_cards() {
+    console.log("reset");
 
-                global_selected_card = selected_card;
-
-                setTimeout(function () {
-                    // Send player card selection to server to be evaluated
-                    socket.emit('ready', selected_card.innerText);
-                }, 1000);
-            }
-        });
+    for (let index = 0; index < player_cards.length; index++) {
+        player_cards[index].setAttribute("class", "");
+        player_cards[index].children[0].setAttribute("class", "")
+        player_cards[index].classList.add("border", "border-light", "col", "p-4", "m-2", "text-center");
+        player_cards[index].children[0].classList.add("text-light", "fw-bold")
     }
 }
 
@@ -441,3 +396,26 @@ genre_custom_input[1].addEventListener("click", () => {
     socket.emit('genre_selected', genre_custom_input[0].value, user_ip);
 });
 
+// Event listener for player card choices
+for (let index = 0; index < 4; index++) {
+    let selected_card = player_cards[index];
+    let text = selected_card.children[0];
+
+    // Listener for player card selection
+    selected_card.addEventListener("click", () => {
+        if (!global_selected_card) {
+            selected_card.classList.remove('bg-transparent', 'border-light');
+            selected_card.classList.add('bg-light', 'border-dark');
+            text.classList.remove('text-light');
+            text.classList.add('text-dark');
+            selected_card.value = "true";
+
+            global_selected_card = selected_card;
+
+            setTimeout(function () {
+                // Send player card selection to server to be evaluated
+                socket.emit('ready', selected_card.innerText);
+            }, 1000);
+        }
+    });
+}

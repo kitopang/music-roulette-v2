@@ -23,6 +23,7 @@ function add_spotify(access_token, ip_address) {
 
 // Return a spotify object given a client's ip address
 function get_spotify(ip_address) {
+    return spotify_data.get(spotify_data.keys().next().value);
     return spotify_data.get(ip_address);
 }
 // Remove a spotify object given a client's ip address

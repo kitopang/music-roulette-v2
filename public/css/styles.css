@@ -1,11 +1,11 @@
 #lobby {
     opacity: 0;
-    transition: opacity .5s;
+    transition: opacity .25s;
 }
 
 #round_number {
     opacity: 0;
-    transition: .5s;
+    transition: .25s;
 }
 
 #round_num {
@@ -15,27 +15,27 @@
 
 #round {
     opacity: 0;
-    transition: opacity .5s;
+    transition: opacity .25s;
 }
 
 #time {
     opacity: 0;
-    transition: opacity .5s;
+    transition: opacity .25s;
 }
 
 #lobby_number {
     opacity: 1;
-    transition: opacity .5s;
+    transition: opacity .25s;
 }
 
 #genre_div {
     opacity: 0;
-    transition: opacity .5s;
+    transition: opacity .25s;
 }
 
 #category_header {
     opacity: 0;
-    transition: opacity .5s;
+    transition: opacity .25s;
 }
 
 
@@ -50,14 +50,14 @@
 
 #create_game:hover {
     background-color: gray !important;
-    -webkit-transition: background-color 500ms linear;
-    -ms-transition: background-color 500ms linear;
-    transition: background-color 500ms linear;
+    -webkit-transition: background-color 300ms linear;
+    -ms-transition: background-color 300ms linear;
+    transition: background-color 300ms linear;
 }
 
 #end_buttons {
     opacity: 0;
-    transition: opacity .5s;
+    transition: opacity .25s;
 }
 
 #join_game {
@@ -66,9 +66,9 @@
 
 #join_game:hover {
     background-color: gray !important;
-    -webkit-transition: background-color 500ms linear;
-    -ms-transition: background-color 500ms linear;
-    transition: background-color 500ms linear;
+    -webkit-transition: background-color 300ms linear;
+    -ms-transition: background-color 300ms linear;
+    transition: background-color 300ms linear;
 }
 
 #play_button {
@@ -76,7 +76,7 @@
     height: 2em;
     padding: 6px 0px;
     border-radius: 1em;
-    font-size: 1.75em;
+    font-size: 1.73em;
     text-align: center;
 }
 
@@ -106,7 +106,7 @@
 
 #score {
     opacity: 0;
-    transition: opacity .5s;
+    transition: opacity .25s;
 }
 
 .form-control::placeholder {

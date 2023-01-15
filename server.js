@@ -4,10 +4,10 @@
 // Author: Kito Tanaka Pang
 // github.com/kitopang
 
-
-//let local_ip = "http://localhost:8888/";        // This is the IP of the machine this server is running on
+// MAKE SURE TO COMMENT OUT OVERRIDE IN SPOTIFY.JS GET_SPOTIFY() METHOD
+let local_ip = "http://localhost:8888/";        // This is the IP of the machine this server is running on
 //let local_ip = "http://192.168.0.104:8888/"
-let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
+//let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
 
 const express = require('express');
 const path = require('path');
@@ -222,7 +222,7 @@ function initiate_next_round(lobby, player, socket) {
     setTimeout(function () {
         // Recursive call -- run next round after a few seconds 
         game_timer(lobby, socket);
-    }, 2500);
+    }, 3500);
 }
 
 // Choose a random song by finding a random index in player and song lists
