@@ -71,7 +71,7 @@ io.on('connection', socket => {
             console.log("----------- An error has been caught: -----------")
             console.log(e);
         }
-    })
+    });
 
     // Return all players in a current lobby to a client
     socket.on('initialize_lobby', (code) => {
@@ -80,9 +80,38 @@ io.on('connection', socket => {
             socket.emit('initialize_lobby', lobby.players, lobby)
             socket.emit('round_num_sel', lobby.max_rounds);
         } catch (e) {
+            console.log("----------- An error has been caught: -----------")
+            console.log(e);
             socket.emit('error', e);
         }
-    })
+    });
+
+    socket.on('reset_lobby', () => {
+        try {
+            let player = get_player(socket.id);
+            let lobby = get_lobby(player.lobby_code);
+            lobby.interval = undefined;
+            lobby.ready_players = 0;
+            lobby.current_round = 0;
+            lobby.music_array = [];
+            lobby.time_elapsed = 0;
+            lobby.genre = undefined;
+            lobby.four_random_songs = [];
+            lobby.visited_songs = new Set();
+            lobby.correct_song = undefined;
+
+            for (let index = 0; index < lobby.players.length; index++) {
+                lobby.players[index].score = 0;
+            }
+
+            io.in(player.lobby_code).emit('reset_lobby');
+
+        } catch (e) {
+            console.log("----------- An error has been caught: -----------")
+            console.log(e);
+            socket.emit('error', e);
+        }
+    });
 
     // Handle player disconnection
     socket.on('disconnect', () => {
@@ -98,6 +127,7 @@ io.on('connection', socket => {
             lobby_leave(player.lobby_code, player)
             player_leave(socket.id);
         } catch (e) {
+            console.log("----------- An error has been caught: -----------")
             console.log(e);
         }
     });
@@ -105,13 +135,14 @@ io.on('connection', socket => {
     socket.on('round_num_sel', (num) => {
         try {
             let player = get_player(socket.id);
-
             let lobby = get_lobby(player.lobby_code);
 
             lobby.max_rounds = num;
             console.log(lobby);
             socket.to(player.lobby_code).emit('round_num_sel', num);
         } catch (e) {
+            console.log("----------- An error has been caught: -----------")
+            console.log(e);
             socket.emit('error', e);
         }
     });
@@ -125,6 +156,8 @@ io.on('connection', socket => {
             // Signal the lobbies to start their games
             io.in(player.lobby_code).emit('startgame', lobby);
         } catch (e) {
+            console.log("----------- An error has been caught: -----------")
+            console.log(e);
             socket.emit('error', e);
         }
 
@@ -147,8 +180,7 @@ io.on('connection', socket => {
 
             if (!generated_songs) {
                 // If the spotify API was unable to generate songs, throw error to other lobby players and player
-                socket.to(player.lobby_code).emit('error', "spotify");
-                socket.emit('error', "spotify");
+                io.in(player.lobby_code).emit('error', "spotify");
                 return;
             }
 
@@ -157,6 +189,8 @@ io.on('connection', socket => {
             // Recursive call to start the rounds 
             game_timer(lobby, socket);
         } catch (e) {
+            console.log("----------- An error has been caught: -----------")
+            console.log(e);
             socket.emit('error', e);
         }
     });
@@ -166,9 +200,6 @@ io.on('connection', socket => {
     socket.on('ready', (song_selection) => {
         try {
             let player = get_player(socket.id);
-
-            console.log("PLAYER INFO --------")
-            console.log(player);
             let lobby = get_lobby(player.lobby_code);
 
             // Increase number of ready players 
@@ -189,15 +220,17 @@ io.on('connection', socket => {
 
             // If all players have chosen a song, then continue to next round
             if (lobby.ready_players === lobby.players.length) {
-                setTimeout(function () {
-                    initiate_next_round(lobby, player, socket);
-                }, 800);
+                initiate_next_round(lobby, player, socket);
             }
         } catch (e) {
             socket.emit('error', e);
+            console.log("----------- An error has been caught: -----------")
+            console.log(e);
         }
     });
 })
+
+
 
 
 // ***** Helper functions for the above socket conditionals ***** //
@@ -255,12 +288,20 @@ function initiate_next_round(lobby, player, socket) {
     // Signal clients to show the scoreboard 
     // Sort players by score so the highest score appears at top of scoreboard
     sort_players_by_score(lobby);
-    io.in(player.lobby_code).emit('show_results', lobby);
 
     setTimeout(function () {
-        // Recursive call -- run next round after a few seconds 
-        game_timer(lobby, socket);
-    }, 3500);
+        // Show correct or wrong answers
+        io.in(player.lobby_code).emit('show_results', lobby);
+        setTimeout(function () {
+            // Show leaderboards
+            io.in(player.lobby_code).emit('show_leaderboard', lobby);
+            setTimeout(function () {
+                // Recursive call -- run next round after a few seconds 
+                game_timer(lobby, socket);
+            }, 1800);
+        }, 1250);
+    }, 500)
+
 }
 
 // Choose a random song by finding a random index in player and song lists

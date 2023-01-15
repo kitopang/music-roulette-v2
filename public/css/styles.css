@@ -89,6 +89,7 @@
 }
 
 #player_card {
+    transition: background-color 1s;
     background-color: transparent;
 }
 
