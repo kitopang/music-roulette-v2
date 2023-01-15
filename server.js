@@ -19,7 +19,7 @@ const server = http.createServer(app);
 const io = socketio(server)
 
 const ready_players = new Set();
-const total_rounds = 2;
+const total_rounds = 10;
 
 const IP = require('ip');
 
@@ -75,20 +75,20 @@ io.on('connection', socket => {
 
     // Return all players in a current lobby to a client
     socket.on('initialize_lobby', (code) => {
-        let lobby = get_lobby(code);
-
-        if (lobby) {
+        try {
+            let lobby = get_lobby(code);
             socket.emit('initialize_lobby', lobby.players, lobby)
             socket.emit('round_num_sel', lobby.max_rounds);
+        } catch (e) {
+            socket.emit('error', e);
         }
     })
 
     // Handle player disconnection
     socket.on('disconnect', () => {
-        console.log("socket disconnect id: " + socket.id);
-        let player = get_player(socket.id);
+        try {
+            let player = get_player(socket.id);
 
-        if (player) {
             // Let lobby know that player has left 
             socket.to(player.lobby_code).emit('disconnect_player', player);
             // Remove player from socket.io lobby
@@ -97,75 +97,104 @@ io.on('connection', socket => {
             // Remove player from lobby and player lists 
             lobby_leave(player.lobby_code, player)
             player_leave(socket.id);
+        } catch (e) {
+            console.log(e);
         }
     });
 
     socket.on('round_num_sel', (num) => {
-        let player = get_player(socket.id);
-        let lobby = get_lobby(player.lobby_code);
+        try {
+            let player = get_player(socket.id);
 
-        lobby.max_rounds = num;
-        socket.to(player.lobby_code).emit('round_num_sel', num);
+            let lobby = get_lobby(player.lobby_code);
+
+            lobby.max_rounds = num;
+            console.log(lobby);
+            socket.to(player.lobby_code).emit('round_num_sel', num);
+        } catch (e) {
+            socket.emit('error', e);
+        }
     });
 
     //Listen for start command
     socket.on('startgame', (start) => {
-        let player = get_player(socket.id);
-        let lobby = get_lobby(player.lobby_code);
+        try {
+            let player = get_player(socket.id);
+            let lobby = get_lobby(player.lobby_code);
 
-        // Signal the lobbies to start their games
-        io.in(player.lobby_code).emit('startgame', start);
+            // Signal the lobbies to start their games
+            io.in(player.lobby_code).emit('startgame', lobby);
+        } catch (e) {
+            socket.emit('error', e);
+        }
+
     });
 
     // Listen for genre selection by a player
     socket.on('genre_selected', async (genre, user_ip) => {
-        let player = get_player(socket.id);
-        let lobby = get_lobby(player.lobby_code);
+        try {
+            let player = get_player(socket.id);
+            let lobby = get_lobby(player.lobby_code);
 
-        // Update entire lobby's genre object
-        lobby.genre = genre;
+            // Update entire lobby's genre object
+            lobby.genre = genre;
 
-        // Tell players to continue
-        io.in(player.lobby_code).emit('genre_selection_completed', genre);
+            // Tell players to continue
+            io.in(player.lobby_code).emit('genre_selection_completed', genre);
 
-        // Generate songs and add it to the lobby's music array. Use await to make async call blocking (not asynchronous) 
-        let generated_songs = await generate_songs(user_ip, lobby);
-        lobby.music_array = generated_songs;
+            // Generate songs and add it to the lobby's music array. Use await to make async call blocking (not asynchronous) 
+            let generated_songs = await generate_songs(user_ip, lobby);
 
-        // Recursive call to start the rounds 
-        game_timer(lobby, socket);
+            if (!generated_songs) {
+                // If the spotify API was unable to generate songs, throw error to other lobby players and player
+                socket.to(player.lobby_code).emit('error', "spotify");
+                socket.emit('error', "spotify");
+                return;
+            }
+
+            lobby.music_array = generated_songs;
+
+            // Recursive call to start the rounds 
+            game_timer(lobby, socket);
+        } catch (e) {
+            socket.emit('error', e);
+        }
     });
 
     // ***** THE FOLLOWING HANDLES GAMEPLAY ***** //
     // If a user selects a song choice, do stuff
     socket.on('ready', (song_selection) => {
-        let player = get_player(socket.id);
-        console.log("PLAYER INFO --------")
-        console.log(player);
-        let lobby = get_lobby(player.lobby_code);
+        try {
+            let player = get_player(socket.id);
 
-        // Increase number of ready players 
-        lobby.ready_players++;
+            console.log("PLAYER INFO --------")
+            console.log(player);
+            let lobby = get_lobby(player.lobby_code);
 
-        // If song selection matches the correct song, then emit true to client 
+            // Increase number of ready players 
+            lobby.ready_players++;
 
-        if (song_selection.trim() === lobby.correct_song.track.name.trim()) {
-            console.log("good");
-            // Calculate score using a simliar algorithim that Kahoot uses
-            let score = Math.floor((1 - ((lobby.time_elapsed / lobby.max_time) / 2)) * 1000);
-            player.score += score;
-            socket.emit('select', true, lobby.correct_song.track.name);
-        } else {
-            // If song selection doesn't match current song, then emit false to client
-            player.score += 0;
-            socket.emit('select', false, lobby.correct_song.track.name);
-        }
+            // If song selection matches the correct song, then emit true to client 
 
-        // If all players have chosen a song, then continue to next round
-        if (lobby.ready_players === lobby.players.length) {
-            setTimeout(function () {
-                initiate_next_round(lobby, player, socket);
-            }, 800);
+            if (song_selection.trim() === lobby.correct_song.track.name.trim()) {
+                // Calculate score using a simliar algorithim that Kahoot uses
+                let score = Math.floor((1 - ((lobby.time_elapsed / lobby.max_time) / 2)) * 1000);
+                player.score += score;
+                socket.emit('select', true, lobby.correct_song.track.name);
+            } else {
+                // If song selection doesn't match current song, then emit false to client
+                player.score += 0;
+                socket.emit('select', false, lobby.correct_song.track.name);
+            }
+
+            // If all players have chosen a song, then continue to next round
+            if (lobby.ready_players === lobby.players.length) {
+                setTimeout(function () {
+                    initiate_next_round(lobby, player, socket);
+                }, 800);
+            }
+        } catch (e) {
+            socket.emit('error', e);
         }
     });
 })

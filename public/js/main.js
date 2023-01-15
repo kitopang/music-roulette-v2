@@ -24,6 +24,7 @@ const genre_custom_input = document.querySelectorAll('#genre_custom_input');
 const modal_button = document.querySelector('#modal_button');
 const player_cards = document.querySelectorAll('#player_card');
 const genre_indicator = document.querySelector('#genre_indicator');
+const modal_text = document.querySelector("#modal_text");
 
 const btnradio1 = document.querySelector('#btnradio1');
 const btnradio2 = document.querySelector('#btnradio2');
@@ -90,7 +91,6 @@ socket.on('initialize_lobby', (players, lobby) => {
     }
 
     // Initialize round number for first run
-    round_num.innerText = "Round " + (lobby.current_round + 1) + "/" + lobby.max_rounds;
     lobby_div.classList.remove("d-none");
     setTimeout(function () {
 
@@ -98,12 +98,20 @@ socket.on('initialize_lobby', (players, lobby) => {
     }, 300);
 })
 
+// Handle server error
 socket.on('error', e => {
+    if (e === "spotify") {
+        modal_text.innerText = "Couldn't find songs for selected genre. Try different keywords and check spelling."
+    } else {
+        modal_text.innerText = "An unknown error occured. Try restarting app and signing in to Spotify."
+    }
     modal_button.click();
 });
 
+// Handle round number selection in lobby screen
 socket.on('round_num_sel', num => {
-    console.log(num);
+    // Turn off onclicklistener to prevent infinite loop
+    deactivated = true;
     if (num === 5) {
         btnradio1.click();
     } else if (num === 10) {
@@ -112,29 +120,31 @@ socket.on('round_num_sel', num => {
         btnradio3.click();
     }
 
+    // Turn it back on so a user can click again
     deactivated = false;
 })
 
 // Server --> client; game has started, so show genre page
-socket.on('startgame', start => {
-    if (start === 'true') {
-        // Hide lobby GUI
-        lobby_div.style.opacity = '0';
-        lobby_number.style.opacity = '0';
+socket.on('startgame', lobby => {
+    // Send round number text
+    round_num.innerText = "Round " + (lobby.current_round + 1) + "/" + lobby.max_rounds;
 
-        // Show genre selection page
+    // Hide lobby GUI
+    lobby_div.style.opacity = '0';
+    lobby_number.style.opacity = '0';
+
+    // Show genre selection page
+    setTimeout(function () {
+        lobby_div.classList.add('d-none');
+        category_header.classList.remove('d-none');
+        lobby_number.classList.add('d-none');
+        genre_div.classList.remove('d-none');
         setTimeout(function () {
-            lobby_div.classList.add('d-none');
-            category_header.classList.remove('d-none');
-            lobby_number.classList.add('d-none');
-            genre_div.classList.remove('d-none');
-            setTimeout(function () {
-                genre_div.style.opacity = '1';
-                category_header.style.opacity = '1';
-            }, 300);
-            timer.style.opacity = '1';
+            genre_div.style.opacity = '1';
+            category_header.style.opacity = '1';
         }, 300);
-    }
+        timer.style.opacity = '1';
+    }, 300);
 })
 
 // Server --> client; genre has been selected, so start actual gameplay
@@ -173,7 +183,6 @@ socket.on('select', (correct, card_value) => {
     for (let i = 0; i < player_cards.length; i++) {
         if (player_cards[i].innerText === card_value) {
             correct_card = player_cards[i];
-            console.log(correct_card.innerText);
         }
     }
 });
@@ -331,8 +340,6 @@ function populate_cards(music_data) {
 
     // Add each song to the DOM
     for (let index = 0; index < 4; index++) {
-        console.log(music_data[index].track.name);
-        console.log(player_cards[index].children[0]);
         player_cards[index].children[0].innerText = music_data[index].track.name;
     }
 }
@@ -449,19 +456,16 @@ btnradio1.addEventListener("click", () => {
     if (!deactivated) {
         socket.emit('round_num_sel', 5);
     }
-    deactivated = true;
 });
 
 btnradio2.addEventListener("click", () => {
     if (!deactivated) {
         socket.emit('round_num_sel', 10);
     }
-    deactivated = true;
 });
 
 btnradio3.addEventListener("click", () => {
     if (!deactivated) {
         socket.emit('round_num_sel', 15);
     }
-    deactivated = true;
 }); 
