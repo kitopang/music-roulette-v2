@@ -354,6 +354,7 @@ function render_next_round(music_data, player_data, first_round) {
                     round_div.classList.remove('d-none');
                     setTimeout(function () {
                         round_div.style.opacity = '1';
+                        music_box.click();
                     }, 300)
                 }, 300)
             }, 1000);
