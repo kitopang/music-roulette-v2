@@ -293,7 +293,7 @@ function show_leaderboard(lobby, last_round) {
                         score_div.classList.add('d-none');
                         reset_cards();
                     }, 1000);
-                }, 2000);
+                }, 1500);
             }
         }, 1000);
     }, 1000);
@@ -447,7 +447,7 @@ for (let index = 0; index < 4; index++) {
             setTimeout(function () {
                 // Send player card selection to server to be evaluated
                 socket.emit('ready', selected_card.innerText);
-            }, 1000);
+            }, 300);
         }
     });
 }
