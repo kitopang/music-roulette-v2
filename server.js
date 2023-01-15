@@ -19,7 +19,7 @@ const server = http.createServer(app);
 const io = socketio(server)
 
 const ready_players = new Set();
-const total_rounds = 15;
+const total_rounds = 2;
 
 const IP = require('ip');
 
@@ -58,7 +58,7 @@ io.on('connection', socket => {
             const player = player_join(socket.id, spotify_item.username, user_ip, code, spotify_item.access_token, 0, undefined);
 
             // Add player to existing lobby or create a new lobby 
-            join_lobby(code, player, 10);
+            join_lobby(code, player, total_rounds);
 
             // Add player to lobby on socket.io side
             socket.join(player.lobby_code)
@@ -78,7 +78,8 @@ io.on('connection', socket => {
         let lobby = get_lobby(code);
 
         if (lobby) {
-            socket.emit('initialize_lobby', lobby.players)
+            socket.emit('initialize_lobby', lobby.players, lobby)
+            socket.emit('round_num_sel', lobby.max_rounds);
         }
     })
 
@@ -97,6 +98,14 @@ io.on('connection', socket => {
             lobby_leave(player.lobby_code, player)
             player_leave(socket.id);
         }
+    });
+
+    socket.on('round_num_sel', (num) => {
+        let player = get_player(socket.id);
+        let lobby = get_lobby(player.lobby_code);
+
+        lobby.max_rounds = num;
+        socket.to(player.lobby_code).emit('round_num_sel', num);
     });
 
     //Listen for start command
@@ -176,7 +185,7 @@ function game_timer(lobby, socket) {
     let first_round = lobby.current_round === 0
 
     // Base case: the max number of rounds is played. 
-    if (lobby.current_round >= lobby.max_rounds - 1) {
+    if (lobby.current_round >= lobby.max_rounds) {
         io.in(player.lobby_code).emit('end_game', lobby)
         return;
     }

@@ -109,6 +109,11 @@
     transition: opacity .25s;
 }
 
+#genre_indicator {
+    opacity: 0;
+    transition: opacity .5s;
+}
+
 .form-control::placeholder {
     /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: rgb(199, 199, 199);

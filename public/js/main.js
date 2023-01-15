@@ -17,18 +17,22 @@ const round_num = document.querySelector('#round_num');
 const scoreboard = document.querySelector('#scoreboard');
 const end_buttons = document.querySelector('#end_buttons');
 const timer = document.querySelector('#time');
-
 const category_header = document.querySelector('#category_header');
 const genre_div = document.querySelector('#genre_div');
 const genre_selection = document.querySelector('#genre_selection');
 const genre_custom_input = document.querySelectorAll('#genre_custom_input');
-
 const modal_button = document.querySelector('#modal_button');
 const player_cards = document.querySelectorAll('#player_card');
+const genre_indicator = document.querySelector('#genre_indicator');
+
+const btnradio1 = document.querySelector('#btnradio1');
+const btnradio2 = document.querySelector('#btnradio2');
+const btnradio3 = document.querySelector('#btnradio3');
 
 
 const socket = io();
 
+let deactivated = false;
 let song_url;
 let chosen_player;
 let global_selected_card;
@@ -36,6 +40,7 @@ let correct_card;
 let all_cards;
 let player_is_correct;
 let user_ip;
+let rounds = 5;
 
 // Get lobby code from URL query string
 const lobby = Qs.parse(location.search, {
@@ -79,11 +84,13 @@ socket.on('join_lobby', player => {
 socket.emit('initialize_lobby', lobby.code)
 
 // Server --> client; allows client to populate lobby with players that are already in  
-socket.on('initialize_lobby', players => {
+socket.on('initialize_lobby', (players, lobby) => {
     for (player of players) {
         add_player_to_lobby(player);
     }
 
+    // Initialize round number for first run
+    round_num.innerText = "Round " + (lobby.current_round + 1) + "/" + lobby.max_rounds;
     lobby_div.classList.remove("d-none");
     setTimeout(function () {
 
@@ -95,12 +102,24 @@ socket.on('error', e => {
     modal_button.click();
 });
 
+socket.on('round_num_sel', num => {
+    console.log(num);
+    if (num === 5) {
+        btnradio1.click();
+    } else if (num === 10) {
+        btnradio2.click();
+    } else {
+        btnradio3.click();
+    }
+
+    deactivated = false;
+})
+
 // Server --> client; game has started, so show genre page
 socket.on('startgame', start => {
     if (start === 'true') {
         // Hide lobby GUI
         lobby_div.style.opacity = '0';
-        end_buttons.style.opacity = '0';
         lobby_number.style.opacity = '0';
 
         // Show genre selection page
@@ -130,9 +149,11 @@ socket.on('genre_selection_completed', genre => {
         genre_div.classList.add('d-none');
         category_header.classList.add('d-none');
         timer.classList.remove('d-none');
+        genre_indicator.innerText = genre;
 
         setTimeout(function () {
             timer.style.opacity = '1';
+            genre_indicator.style.opacity = '1';
         }, 300);
 
     }, 300);
@@ -179,9 +200,10 @@ socket.on('show_results', lobby => {
     global_selected_card = undefined;
     player_is_correct = undefined;
 
-    round_num.innerText = "Round " + (lobby.current_round + 1) + "/10";
+    round_num.innerText = "Round " + (lobby.current_round + 1) + "/" + lobby.max_rounds;
+    last_round = lobby.current_round >= lobby.max_rounds;
     myAudio.pause();
-    show_leaderboard(lobby);
+    show_leaderboard(lobby, last_round);
 })
 
 // Server --> client; handle game ending
@@ -220,7 +242,7 @@ function remove_player_from_lobby(player) {
 }
 
 // Auxillary function that updates leaderboard with players and scores
-function show_leaderboard(lobby, end_game) {
+function show_leaderboard(lobby, last_round) {
     let all_players = lobby.players;
 
     // Clear old leaderboard
@@ -254,13 +276,16 @@ function show_leaderboard(lobby, end_game) {
         setTimeout(function () {
             round_div.classList.add('d-none');
             score_div.style.opacity = '1';
-            setTimeout(function () {
-                score_div.style.opacity = '0';
+            // If it's the last round, don't hide scoreboard
+            if (!last_round) {
                 setTimeout(function () {
-                    score_div.classList.add('d-none');
-                    reset_cards();
-                }, 1000);
-            }, 2000);
+                    score_div.style.opacity = '0';
+                    setTimeout(function () {
+                        score_div.classList.add('d-none');
+                        reset_cards();
+                    }, 1000);
+                }, 2000);
+            }
         }, 1000);
     }, 1000);
 }
@@ -419,3 +444,24 @@ for (let index = 0; index < 4; index++) {
         }
     });
 }
+
+btnradio1.addEventListener("click", () => {
+    if (!deactivated) {
+        socket.emit('round_num_sel', 5);
+    }
+    deactivated = true;
+});
+
+btnradio2.addEventListener("click", () => {
+    if (!deactivated) {
+        socket.emit('round_num_sel', 10);
+    }
+    deactivated = true;
+});
+
+btnradio3.addEventListener("click", () => {
+    if (!deactivated) {
+        socket.emit('round_num_sel', 15);
+    }
+    deactivated = true;
+}); 

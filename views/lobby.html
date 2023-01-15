@@ -16,9 +16,18 @@
     <div class="container-fluid  min-vh-100 align-items-center justify-content-center"
         style="background-color: #000000;">
 
-        <h1 class="display-5 text-light mb-1 pt-5 px-5 fw-bold"><span style="color: #43A047">musicRoulette</span><span
-                style="color: #ffffff">.io</span>
-        </h1>
+        <div class="justify-content-between d-flex">
+            <div>
+                <h1 class="display-5 text-light mb-1 pt-5 px-5 fw-bold"><span
+                        style="color: #43A047">musicRoulette</span><span style="color: #ffffff">.io</span>
+                </h1>
+            </div>
+
+            <div>
+                <h1 class="display-5 text-light mb-1 pt-5 px-5 fw-bold" id="genre_indicator"></h1>
+            </div>
+        </div>
+
         <h1 class="display-5 text-light mb-5 px-5 fw-bold" id="lobby_number">Lobby:</h1>
         <h1 class="display-5 text-light mb-5 px-5 fw-bold d-none" id="time">Time:</h1>
         <h1 class="display-5 text-light mb-5 px-5 fw-bold d-none" id="category_header">Choose your genre:</h1>
@@ -66,8 +75,23 @@
                 <div class="justify-content-between d-flex col-md-7 col-10 mt-3">
                     <button type="button" class="btn btn-outline-light fw-bold" id="" onclick="history.back()">&lt;
                         Leave</button>
+
+
+
                     <button type="button" class="btn btn-outline-light fw-bold" id="start_button">Start Game
                         &gt;</button>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center my-5">
+                <div class="btn-group " role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                    <label class="btn btn-outline-success" for="btnradio1">5 Rounds</label>
+
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+                    <label class="btn btn-outline-success" for="btnradio2">10 Rounds</label>
+
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+                    <label class="btn btn-outline-success" for="btnradio3">15 Rounds</label>
                 </div>
             </div>
         </div>
