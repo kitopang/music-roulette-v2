@@ -485,7 +485,7 @@ for (let index = 0; index < 4; index++) {
 
 btnradio1.addEventListener("click", () => {
     if (!deactivated) {
-        socket.emit('round_num_sel', 1);
+        socket.emit('round_num_sel', 5);
     }
 });
 
