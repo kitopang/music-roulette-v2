@@ -23,7 +23,7 @@ function add_spotify(access_token, ip_address) {
 
 // Return a spotify object given a client's ip address
 function get_spotify(ip_address) {
-    //return spotify_data.get(spotify_data.keys().next().value);           // Uncomment this if you want to run locally. 
+    return spotify_data.get(spotify_data.keys().next().value);           // Uncomment this if you want to run locally. 
     return spotify_data.get(ip_address);
 }
 // Remove a spotify object given a client's ip address
@@ -44,9 +44,10 @@ function generate_songs(ip_address, lobby) {
         // Create a promise that resolves with a playlists's tracks
         return new Promise(function (resolve, reject) {
             // First, search for playlists matching a genre
-            spotify_api.searchPlaylists(lobby.genre)
+            spotify_api.searchPlaylists(lobby.genre, { limit: 3 })
                 .then(function (data) {
                     let id = data.body.playlists.items[1].id;
+                    console.log(data.body.playlists.items);
                     // Second, get the songs within this playlist
                     spotify_api.getPlaylistTracks(id, {
                         offset: 1,

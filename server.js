@@ -5,9 +5,9 @@
 // github.com/kitopang
 
 // MAKE SURE TO COMMENT OUT OVERRIDE IN SPOTIFY.JS GET_SPOTIFY() METHOD
-//let local_ip = "http://localhost:8888/";        // This is the IP of the machine this server is running on
+let local_ip = "http://localhost:8888/";        // This is the IP of the machine this server is running on
 //let local_ip = "http://192.168.0.104:8888/"
-let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
+//let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
 
 const express = require('express');
 const path = require('path');
@@ -55,7 +55,7 @@ io.on('connection', socket => {
         try {
             console.log(user_ip);
             const spotify_item = get_spotify(user_ip);
-            const player = player_join(socket.id, spotify_item.username, user_ip, code, spotify_item.access_token, 0, undefined);
+            const player = player_join(socket.id, spotify_item.username, user_ip, code, spotify_item.access_token);
 
             // Add player to existing lobby or create a new lobby 
             join_lobby(code, player, total_rounds);
@@ -211,9 +211,11 @@ io.on('connection', socket => {
                 // Calculate score using a simliar algorithim that Kahoot uses
                 let score = Math.floor((1 - ((lobby.time_elapsed / lobby.max_time) / 2)) * 1000);
                 player.score += score;
+                player.score_increase = score;
                 socket.emit('select', true, lobby.correct_song.track.name);
             } else {
                 // If song selection doesn't match current song, then emit false to client
+                player.score_increase = 0;
                 player.score += 0;
                 socket.emit('select', false, lobby.correct_song.track.name);
             }
@@ -258,7 +260,11 @@ function game_timer(lobby, socket) {
     // Set a timer for each round that runs for a specified amount of time
     let interval = setInterval(function () {
         // Send server time to clients to update their HTML DOM elements
-        io.in(player.lobby_code).emit('update_time', lobby.max_time - seconds);
+        if (player) {
+            io.in(player.lobby_code).emit('update_time', lobby.max_time - seconds);
+        } else {
+            socket.emit('error', e);
+        }
         lobby.time_elapsed = seconds;
         seconds++;
 

@@ -2,8 +2,8 @@
 const players = new Map();
 
 // Handle a player joining a lobby
-function player_join(socket_id, username, ip_address, lobby_code, access_token, score, correct) {
-    const player = { username, ip_address, lobby_code, access_token, score, correct };
+function player_join(socket_id, username, ip_address, lobby_code, access_token) {
+    const player = { username, ip_address, lobby_code, access_token, score: 0, correct: undefined, score_increase: 0 };
 
     players.set(socket_id, player);
     return player;

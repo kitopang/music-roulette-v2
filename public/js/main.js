@@ -25,11 +25,9 @@ const modal_button = document.querySelector('#modal_button');
 const player_cards = document.querySelectorAll('#player_card');
 const genre_indicator = document.querySelector('#genre_indicator');
 const modal_text = document.querySelector("#modal_text");
-
 const btnradio1 = document.querySelector('#btnradio1');
 const btnradio2 = document.querySelector('#btnradio2');
 const btnradio3 = document.querySelector('#btnradio3');
-
 const return_btn = document.querySelector('#return');
 
 
@@ -300,8 +298,20 @@ function show_leaderboard(lobby, last_round) {
         score.classList.add('h5');
 
         name.innerText = all_players[i].username;
-        score.innerText = all_players[i].score;
 
+        let score_span = document.createElement('span');
+        let increment_span = document.createElement('span');
+        score_span.innerText = all_players[i].score;
+        increment_span.innerHTML = "  +" + all_players[i].score_increase;
+
+        if (all_players[i].score_increase > 0) {
+            increment_span.style.color = "#43A047";
+        } else {
+            increment_span.style.color = "#dc3545";
+        }
+
+        score.append(score_span);
+        name.append(increment_span);
         list_element.append(name, score);
         scoreboard.append(list_element);
     }
@@ -486,7 +496,8 @@ for (let index = 0; index < 4; index++) {
 
 btnradio1.addEventListener("click", () => {
     if (!deactivated) {
-        socket.emit('round_num_sel', 5);
+        // Change 5 to 1 for debugging
+        socket.emit('round_num_sel', 1);
     }
 });
 
