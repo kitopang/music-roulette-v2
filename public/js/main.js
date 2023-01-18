@@ -8,7 +8,7 @@ const lobby_number = document.querySelector('#lobby_number');
 const player_choices_div = document.querySelector('#player_choices');
 const album_image = document.querySelector('#album_image');
 const song_title = document.querySelector('#song_title');
-const song_artist = document.querySelector('#song_artist');
+const hint = document.querySelector('#hint');
 const play_button = document.querySelector('#play_button');
 const music_box = document.querySelector('#music_box');
 const myAudio = document.createElement('audio');
@@ -29,6 +29,7 @@ const btnradio1 = document.querySelector('#btnradio1');
 const btnradio2 = document.querySelector('#btnradio2');
 const btnradio3 = document.querySelector('#btnradio3');
 const return_btn = document.querySelector('#return');
+const volume_range = document.querySelector('#volume_range');
 
 
 const socket = io();
@@ -42,6 +43,7 @@ let all_cards;
 let player_is_correct;
 let user_ip;
 let rounds = 5;
+let playing;
 
 // Get lobby code from URL query string
 const lobby = Qs.parse(location.search, {
@@ -230,8 +232,7 @@ socket.on('end_game', lobby => {
 socket.on('reset_lobby', () => {
     reset_cards();
     genre_custom_input[0].value = "";
-
-
+    hint.classList.remove('d-none');
     end_buttons.style.opacity = '0';
     scoreboard_container.style.opacity = '0';
     timer.style.opacity = '0';
@@ -297,12 +298,12 @@ function show_leaderboard(lobby, last_round) {
         name.classList.add('h5');
         score.classList.add('h5');
 
-        name.innerText = all_players[i].username;
+        name.innerHTML = all_players[i].username + "&nbsp;&nbsp;&nbsp;";
 
         let score_span = document.createElement('span');
         let increment_span = document.createElement('span');
         score_span.innerText = all_players[i].score;
-        increment_span.innerHTML = "  +" + all_players[i].score_increase;
+        increment_span.innerHTML = "+" + all_players[i].score_increase;
 
         if (all_players[i].score_increase > 0) {
             increment_span.style.color = "#43A047";
@@ -345,7 +346,7 @@ function show_leaderboard(lobby, last_round) {
 function render_next_round(music_data, player_data, first_round) {
     // Remove old music choices
 
-    play_button.value = "false";
+    playing = "false";
 
     // Set the song to be displayed
     set_random_song(music_data[0].track);
@@ -357,17 +358,35 @@ function render_next_round(music_data, player_data, first_round) {
         round_number_div.classList.remove('d-none');
         setTimeout(function () {
             round_number_div.style.opacity = '1';
-            setTimeout(function () {
-                round_number_div.style.opacity = '0';
+
+            // If first_round, show the round_number div for slightly longer so the hint can be read. 
+            if (first_round) {
                 setTimeout(function () {
-                    round_number_div.classList.add('d-none');
-                    round_div.classList.remove('d-none');
+                    round_number_div.style.opacity = '0';
                     setTimeout(function () {
-                        round_div.style.opacity = '1';
-                        music_box.click();
+                        round_number_div.classList.add('d-none');
+                        round_div.classList.remove('d-none');
+                        setTimeout(function () {
+                            round_div.style.opacity = '1';
+                            // Hide hint for subsequent rounds
+                            hint.classList.add('d-none');
+                            music_box.children[0].click();
+                        }, 300)
                     }, 300)
-                }, 300)
-            }, 1000);
+                }, 2000);
+            } else {
+                setTimeout(function () {
+                    round_number_div.style.opacity = '0';
+                    setTimeout(function () {
+                        round_number_div.classList.add('d-none');
+                        round_div.classList.remove('d-none');
+                        setTimeout(function () {
+                            round_div.style.opacity = '1';
+                            music_box.children[0].click();
+                        }, 300)
+                    }, 300)
+                }, 1000);
+            }
         }, 300);
 
     }, 1000);
@@ -388,8 +407,6 @@ function populate_cards(music_data) {
 }
 
 function reset_cards() {
-    console.log("reset");
-
     for (let index = 0; index < player_cards.length; index++) {
         player_cards[index].setAttribute("class", "");
         player_cards[index].children[0].setAttribute("class", "")
@@ -436,15 +453,15 @@ function shuffle(array) {
 
 
 // Event listener for the play button
-music_box.addEventListener("click", () => {
+music_box.children[0].addEventListener("click", () => {
     myAudio.setAttribute('src', song_url);
 
-    if (play_button.value === "false") {
+    if (playing === "false") {
         myAudio.play();
-        play_button.value = "true";
+        playing = "true";
     } else {
         myAudio.pause();
-        play_button.value = "false";
+        playing = "false";
     }
 })
 
@@ -496,8 +513,8 @@ for (let index = 0; index < 4; index++) {
 
 btnradio1.addEventListener("click", () => {
     if (!deactivated) {
-        // Change 5 to 1 for debugging
-        socket.emit('round_num_sel', 1);
+        // Change 5 to 1 for debugging --> will only run one round
+        socket.emit('round_num_sel', 5);
     }
 });
 
@@ -515,4 +532,8 @@ btnradio3.addEventListener("click", () => {
 
 return_btn.addEventListener("click", () => {
     socket.emit('reset_lobby');
-}); 
+});
+
+volume_range.oninput = function () {
+    myAudio.volume = volume_range.value / 100;
+};

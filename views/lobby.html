@@ -24,7 +24,7 @@
             </div>
 
             <div>
-                <h1 class="display-5 text-light mb-1 pt-5 px-5 fw-bold" id="genre_indicator"></h1>
+                <h1 class="display-5 text-light mb-1 pt-5 px-5 fw-bold d-sm-none d-md-block" id="genre_indicator"></h1>
             </div>
         </div>
 
@@ -172,22 +172,25 @@
         <!---------------- Round Number ---------------->
 
         <div class="d-flex justify-content-center align-items-center d-none" id="round_number">
-            <h1 class="display-5 text-light mt-5 pt-5 px-5 fw-bold" id="round_num">Round 1/10</h1>
+            <div class="text-center">
+                <h1 class="display-5 text-light mt-5 pt-5 px-5 fw-bold" id="round_num">Round 1/10</h1>
+                <h4 class="text-light fw-bold fst-italic" id="hint">Hint: Click on album cover to play/pause</h4>
+            </div>
         </div>
 
         <!---------------- Music Player & Selection Cards ---------------->
         <div class="d-flex justify-content-center align-items-center d-none row" id="round">
             <div class="bg-transparent border border-light col-11 col-lg-7 rounded row p-1 p-md-4" id="music_box">
-                <div class="col-lg-3 col-md-4 col-5"><img id="album_image" src="album-placeholder.png"
+                <div class="col-lg-3 col-md-4 col-4"><img id="album_image" src="album-placeholder.png"
                         class="img-thumbnail" alt="Responsive image">
                 </div>
-                <div class="col-lg-6 col-7 pt-4">
-                    <h2 class="text-light fw-bold fst-italic" id="song_title">Song title</h2>
-                    <!--<h3 class="text-light fw-bold fst-italic" id="song_artist">Artist</h3>-->
+                <div class="col-lg-6 col-6 pt-4">
+                    <h2 class="text-light fw-bold fst-italic" id="song_title">Release Date</h2>
                 </div>
-                <div class="col d-md-flex d-none align-items-center justify-content-center">
-                    <button id="play_button" type="button" class="btn btn-outline-light btn-circle btn-sm"
-                        value="false">▷</button>
+                <div class="col-2 d-md-flex d-none flex-column align-items-center justify-content-center">
+                    <!-- <button id="play_button" type="button" class="btn btn-outline-light btn-circle btn-sm mb-2"
+                        value="false">▷</button> -->
+                    <input type="range" class="form-range my-2 background-color-success" id="volume_range">
                 </div>
             </div>
 

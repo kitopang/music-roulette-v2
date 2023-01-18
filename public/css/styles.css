@@ -121,3 +121,18 @@
     opacity: 1;
     /* Firefox */
 }
+
+/* Chrome */
+.form-range::-webkit-slider-thumb {
+    background: #43A047;
+}
+
+/* Firefox */
+.form-range::-moz-range-thumb {
+    background: #43A047;
+}
+
+/* Internet Explorer / Microsoft */
+.form-range::-ms-thumb {
+    background: #43A047;
+}
