@@ -178,13 +178,15 @@ socket.on('new_round', (music_data, player_data, first_round) => {
 });
 
 // Server --> client; handle data that shows if a player's selection was correct as deemed by the server
-socket.on('select', (correct, card_value) => {
+socket.on('select', (correct, correct_card_value) => {
     player_is_correct = correct;
 
-    // Find the correct card if you chose a wrong option
-    for (let i = 0; i < player_cards.length; i++) {
-        if (player_cards[i].innerText === card_value) {
-            correct_card = player_cards[i];
+    if (correct == false) {
+        // Find the correct card if you chose a wrong option
+        for (let i = 0; i < player_cards.length; i++) {
+            if (player_cards[i].innerText === correct_card_value) {
+                correct_card = player_cards[i];
+            }
         }
     }
 });
@@ -192,7 +194,7 @@ socket.on('select', (correct, card_value) => {
 // Server --> client; if all players have selected their choices, show if answer are correct or not
 socket.on('show_results', lobby => {
     if (global_selected_card) {
-        if (player_is_correct) {
+        if (player_is_correct == true) {
             // Display correct choice
             global_selected_card.classList.remove("bg-light");
             global_selected_card.classList.add("bg-success");
@@ -212,7 +214,6 @@ socket.on('show_results', lobby => {
     player_is_correct = undefined;
 
     round_num.innerText = "Round " + (lobby.current_round + 1) + "/" + lobby.max_rounds;
-
     myAudio.pause();
 });
 
