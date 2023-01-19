@@ -180,17 +180,38 @@
 
         <!---------------- Music Player & Selection Cards ---------------->
         <div class="d-flex justify-content-center align-items-center d-none row" id="round">
-            <div class="bg-transparent border border-light col-11 col-lg-7 rounded row p-1 p-md-4" id="music_box">
-                <div class="col-lg-3 col-md-4 col-4"><img id="album_image" src="album-placeholder.png"
+            <div class="bg-transparent border border-light col-11 col-lg-7 rounded row p-1 p-md-4 justify-content-between"
+                id="music_box">
+                <div class="col-7 col-md-7 col-lg-4"><img id="album_image" src="album-placeholder.png"
                         class="img-thumbnail" alt="Responsive image">
                 </div>
-                <div class="col-lg-6 col-6 pt-4">
-                    <h2 class="text-light fw-bold fst-italic" id="song_title">Release Date</h2>
-                </div>
-                <div class="col-2 d-md-flex d-none flex-column align-items-center justify-content-center">
+
+                <div class="col-5 col-md-5 col-lg-4 row justify-content-center d-flex flex-column my-3">
                     <!-- <button id="play_button" type="button" class="btn btn-outline-light btn-circle btn-sm mb-2"
                         value="false">▷</button> -->
-                    <input type="range" class="form-range my-2 background-color-success" id="volume_range">
+                    <div class="justify-content-end align-items-end">
+                        <h1 class="text-light fw-bold fst-italic mb-3 text-end" id="song_title">
+                            Rel. 1999</h1>
+                    </div>
+                    <div class="justify-content-end align-items-end flex-end d-flex">
+                        <div class="row col-12 col-md-9 col-lg-8 align-items-center justify-content-center">
+                            <div class="justify-content-center align-items-center col-4 d-none d-sm-block">
+                                <h5 class="text-light fw-bold fst-italic" id=""><svg xmlns="http://www.w3.org/2000/svg"
+                                        width="32" height="32" fill="currentColor" class="bi bi-volume-up-fill"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z" />
+                                        <path
+                                            d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.483 5.483 0 0 1 11.025 8a5.483 5.483 0 0 1-1.61 3.89l.706.706z" />
+                                        <path
+                                            d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z" />
+                                    </svg></h5>
+                            </div>
+                            <div class="justify-content-center align-items-center col">
+                                <input type="range" class="form-range my-3 background-color-success" id="volume_range">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

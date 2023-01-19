@@ -95,8 +95,10 @@ socket.on('initialize_lobby', (players, lobby) => {
     // Initialize round number for first run
     lobby_div.classList.remove("d-none");
     setTimeout(function () {
-
-        lobby_div.style.opacity = '1';
+        // DEBUGGING
+        // lobby_div.style.opacity = '1';
+        // round_div.classList.remove('d-none');
+        round_div.style.opacity = '1';
     }, 300);
 })
 
