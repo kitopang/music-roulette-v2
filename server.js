@@ -6,8 +6,8 @@
 
 // MAKE SURE TO COMMENT OUT OVERRIDE IN SPOTIFY.JS GET_SPOTIFY() METHOD
 //let local_ip = "http://localhost:8888/";        // This is the IP of the machine this server is running on
-//let local_ip = "http://192.168.0.104:8888/"
-let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
+let local_ip = "http://192.168.0.104:8888/"
+//let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
 
 const express = require('express');
 const path = require('path');
@@ -252,6 +252,11 @@ function game_timer(lobby, socket) {
     if (lobby.current_round >= lobby.max_rounds) {
         io.in(player.lobby_code).emit('end_game', lobby)
         return;
+    }
+
+    // Reset score increase
+    for (let i = 0; i < lobby.players.length; i++) {
+        lobby.players[i].score_increase = 0;
     }
 
     // Signal to the lobbies that a new round is being run. Pass in the randomly selected song

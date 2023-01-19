@@ -240,8 +240,10 @@ socket.on('reset_lobby', () => {
     end_buttons.style.opacity = '0';
     scoreboard_container.style.opacity = '0';
     timer.style.opacity = '0';
+    genre_indicator.style.opacity = '0';
 
     setTimeout(function () {
+        genre_indicator.classList.add("d-none");
         end_buttons.classList.add("d-none");
         scoreboard_container.classList.add("d-none");
         timer.classList.add("d-none");
