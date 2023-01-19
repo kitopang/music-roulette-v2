@@ -1,10 +1,8 @@
 # music-roulette
 
-Analogous to the popular mobile game photo roulette, music roulette allows multiple players to guess each other's top songs through a linked Spotify account. Players can create a randomized lobby or join an existing lobby, then begin guessing who the randomly chosen song belongs to through 15 rounds. Points are awarded to players based on their accuracy and speed.   
+Music roulette is a Spotify-powered web-based game that allows multiple players to competitively guess the song titles of randomly selected songs based on genre. Players can create a randomized lobby or join an existing lobby, choose a genre, then begin guessing the title of a random song through multiple rounds. Points are awarded to players based on their accuracy and speed.   
 
-This app utilizes the Node.JS javascript runtime, Express Node.JS web framework, socket.io for asynchronous player connections, spotify-web-api-node library for spotify handling, and Bootstrap v5.2 for frontend. Designed completely from scratch, this application fully incorporates fullstack web development. 
-
-More images and gameplay footage coming soon!
+This app utilizes the Node.JS javascript runtime, Express Node.JS web framework, socket.io for asynchronous player connections, spotify-web-api-node library for spotify handling, and Bootstrap v5.2 for frontend. Designed completely from scratch, this application incorporates fullstack web development principles. 
 
 
 ![Screen Shot 2022-08-24 at 09 20 08](https://user-images.githubusercontent.com/21183506/186472795-9eb64b83-7055-4cdc-8547-7e41d5726857.png)
