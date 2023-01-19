@@ -136,3 +136,7 @@
 .form-range::-ms-thumb {
     background: #43A047;
 }
+
+div {
+    box-sizing: border-box;
+}

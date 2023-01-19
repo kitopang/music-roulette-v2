@@ -99,7 +99,7 @@ socket.on('initialize_lobby', (players, lobby) => {
 
         // DEBUGGING
         // round_div.classList.remove('d-none');
-        //round_div.style.opacity = '1';
+        // round_div.style.opacity = '1';
     }, 300);
 })
 
