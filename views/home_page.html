@@ -16,9 +16,9 @@
         <h1 class="display-5 text-light mb-1 pt-5 px-5 fw-bold"><span style="color: #43A047">musicRoulette</span><span
                 style="color: #ffffff">.io</span>
         </h1>
-        <h1 class="display-5 text-light mb-5 px-5 fw-bold">spotify:</h1>
+        <h1 class="display-5 text-light mb-5 px-5 fw-bold">Welcome</h1>
 
-        <div class="text-center">
+        <div class="text-center pt-5">
             <div class="row d-flex justify-content-center align-items-center">
                 <div class="bg-light rounded-4 col-md-4 col-8 mx-5 bg-transparent border border-light rounded d-flex align-items-center justify-content-center p-4 mb-3"
                     id="join_game">
@@ -26,8 +26,8 @@
                         <p class="fs-3 text-light fw-bold">Join a game</p>
                         <div class="input-group mb-3">
                             <input type="text" class="form-control bg-dark text-light" placeholder="Lobby code"
-                                aria-label="Recipient's username" aria-describedby="basic-addon2" name="code">
-                            <div class="input-group-append">
+                                aria-label="" aria-describedby="basic-addon2" name="code" maxlength="4" minlength="4">
+                            <div class="input-group-append" id="right_arrow">
                                 <button class="btn btn-outline-light" type="submit">></button>
                             </div>
                         </div>
@@ -52,7 +52,7 @@
 
     </div>
     <script src="js/home_page.js"></script>
-    <script src="js/main.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script language="javascript" src="js/bootstrap.js"></script>
 </body>
 

@@ -51,12 +51,12 @@ const lobby = Qs.parse(location.search, {
 })
 
 
+// Call an api to the IP of the client
 function httpGet() {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", 'https://api.ipify.org', false); // false for synchronous request
     xmlHttp.send(null);
     user_ip = xmlHttp.responseText;
-    console.log("http ip" + xmlHttp.responseText);
 }
 
 httpGet();
@@ -78,7 +78,7 @@ socket.on('disconnect_player', player => {
 // Client --> server; tells server that a new player has joined
 socket.emit('join_lobby', lobby.code, user_ip);
 
-// Server --> client; tells client to add a player to lobby GUI
+// Server --> client; tells client to add a singular newly connected player to lobby GUI
 socket.on('join_lobby', player => {
     add_player_to_lobby(player);
 })
@@ -87,7 +87,7 @@ socket.on('join_lobby', player => {
 socket.emit('initialize_lobby', lobby.code)
 
 // Server --> client; allows client to populate lobby with players that are already in  
-socket.on('initialize_lobby', (players, lobby) => {
+socket.on('initialize_lobby', (players) => {
     for (player of players) {
         add_player_to_lobby(player);
     }
@@ -517,29 +517,36 @@ for (let index = 0; index < 4; index++) {
     });
 }
 
+// Event listener for round selections
+// 5 rounds
 btnradio1.addEventListener("click", () => {
+    // Check if button is deactivated to prevent an infinite loop
     if (!deactivated) {
         // Change 5 to 1 for debugging --> will only run one round
         socket.emit('round_num_sel', 5);
     }
 });
 
+// 10 rounds
 btnradio2.addEventListener("click", () => {
     if (!deactivated) {
         socket.emit('round_num_sel', 10);
     }
 });
 
+// 15 rounds
 btnradio3.addEventListener("click", () => {
     if (!deactivated) {
         socket.emit('round_num_sel', 15);
     }
 });
 
+// Restart game button
 return_btn.addEventListener("click", () => {
     socket.emit('reset_lobby');
 });
 
+// Volume slider event listener
 volume_range.oninput = function () {
     myAudio.volume = volume_range.value / 100;
 };

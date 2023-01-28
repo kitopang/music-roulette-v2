@@ -37,6 +37,7 @@ function lobby_leave(code, player) {
             lobby.players.splice(index, 1);
         }
 
+        // Remove timer 
         clearInterval(lobby.interval);
 
         // Delete entire lobby if it's empty
@@ -45,7 +46,8 @@ function lobby_leave(code, player) {
         }
     }
 
-    console.log("Open lobbies: " + lobbies);
+    console.log("Open lobbies: ");
+    console.log(lobbies);
 }
 
 function sort_players_by_score(lobby) {

@@ -6,8 +6,8 @@
 
 // MAKE SURE TO COMMENT OUT OVERRIDE IN SPOTIFY.JS GET_SPOTIFY() METHOD
 //let local_ip = "http://localhost:8888/";        // This is the IP of the machine this server is running on
-let local_ip = "http://192.168.0.104:8888/"
-//let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
+//let local_ip = "http://192.168.0.104:8888/"
+let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
 
 const express = require('express');
 const path = require('path');
@@ -49,11 +49,14 @@ io.on('connection', socket => {
 
     console.log("connected!");
 
+    socket.on('message', (msg) => {
+        console.log(msg);
+    })
+
     // ***** THE FOLLOWING HANDLES THE LOBBY SYSTEM ***** //
     // Handle a player joining a game lobby
     socket.on('join_lobby', (code, user_ip) => {
         try {
-            console.log(user_ip);
             const spotify_item = get_spotify(user_ip);
             const player = player_join(socket.id, spotify_item.username, user_ip, code, spotify_item.access_token);
 
@@ -77,7 +80,7 @@ io.on('connection', socket => {
     socket.on('initialize_lobby', (code) => {
         try {
             let lobby = get_lobby(code);
-            socket.emit('initialize_lobby', lobby.players, lobby)
+            socket.emit('initialize_lobby', lobby.players)
             socket.emit('round_num_sel', lobby.max_rounds);
         } catch (e) {
             console.log("----------- An error has been caught: -----------")
