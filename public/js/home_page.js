@@ -3,6 +3,8 @@ const create_game_input = document.querySelector('#create_game_input');
 const join_game_div = document.querySelector('#join_game');
 const right_arrow = document.querySelector('#right_arrow');
 
+// const socket = io(); // This throws an error; fix it!!!. Maybe add URL of website in brackets. 
+
 
 game_codes = new Set();
 

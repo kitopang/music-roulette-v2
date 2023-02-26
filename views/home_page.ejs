@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>music-roulette</title>
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container-fluid min-vh-100 " style="background-color: #000000;">
+
+        <h1 class="dislay-5 text-light mb-1 pt-5 px-5 fw-bold"><span style="color: #43A047">musicRoulette</span><span
+                style="color: #ffffff">.io</span>
+        </h1>
+        <h1 class="display-5 text-light mb-5 px-5 fw-bold">Welcome</h1>
+
+
+
+        <!---------------- Main Page ---------------->
+
+        <div class="row d-flex align-items-center justify-content-center">
+
+
+            <!---------------- Join game UI ---------------->
+            <div class="text-center col">
+                <div class="row d-flex justify-content-center pb-5 mb-5">
+                    <div class="bg-light rounded-4 col-md-4 col-6 mx-5 bg-transparent border border-light rounded d-flex align-items-center justify-content-center p-4 mb-3"
+                        id="join_game">
+                        <form action="lobby.html" id="join_form">
+                            <p class="fs-3 text-light fw-bold">Join a game</p>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control bg-dark text-light" placeholder="Lobby code"
+                                    aria-label="" aria-describedby="basic-addon2" name="code" maxlength="4"
+                                    minlength="4">
+                                <div class="input-group-append" id="right_arrow">
+                                    <button class="btn btn-outline-light" type="submit">></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="bg-light rounded-4 col-md-4 col-6 mx-5 border border-light rounded d-flex justify-content-center p-5 mb-3"
+                        id="create_game">
+                        <p class="fs-3 text-light fw-bold">Create a game</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <form action="lobby.html" id="create_game_input" class="d-hidden">
+                <input class="form-control col bg-dark text-light" type="text" placeholder="Lobby code" name="code">
+            </form>
+        </div>
+
+    </div>
+    </div>
+
+    </div>
+    <script src=" https://cdnjs.cloudflare.com/ajax/libs/qs/6.11.0/qs.min.js"
+        integrity="sha512-/l6vieC+YxaZywUhmqs++8uF9DeMvJE61ua5g+UK0TuHZ4TkTgB1Gm1n0NiA86uEOM9JJ6JUwyR0hboKO0fCng=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="js/home_page.js"></script>
+
+    <script language="javascript" src="js/bootstrap.js"></script>
+</body>
+
+</html>

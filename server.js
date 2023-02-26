@@ -5,18 +5,18 @@
 // github.com/kitopang
 
 // MAKE SURE TO COMMENT OUT OVERRIDE IN SPOTIFY.JS GET_SPOTIFY() METHOD
-//let local_ip = "http://localhost:8888/";        // This is the IP of the machine this server is running on
-//let local_ip = "http://192.168.0.104:8888/"
+
 let local_ip = "https://music--roulette.herokuapp.com/";        // This is the IP of the machine this server is running on
 
 const express = require('express');
 const path = require('path');
 const http = require('http');
-const socketio = require('socket.io');
 
+const socketio = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server)
+
 
 const ready_players = new Set();
 const total_rounds = 10;
@@ -34,7 +34,10 @@ const { join_lobby, lobby_leave, get_lobby, sort_players_by_score } = require('.
 const PORT = process.env.PORT || 3000;
 
 // Allow express to use HTML as its view engine
-app.engine('html', require('ejs').renderFile);
+//app.engine('html', require('ejs').renderFile);
+
+// Set view engine to ejs for dynamic templating
+app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/views'));
 
 
@@ -51,7 +54,11 @@ io.on('connection', socket => {
 
     socket.on('message', (msg) => {
         console.log(msg);
-    })
+    });
+
+    socket.on('get_leaderbaord', (x) => {
+        console.log("sending leaderboard info...");
+    });
 
     // ***** THE FOLLOWING HANDLES THE LOBBY SYSTEM ***** //
     // Handle a player joining a game lobby
@@ -352,7 +359,7 @@ const { isObject } = require('util');
 
 // Only need top tracks from a user
 const scopes = [
-    'user-top-read',
+    //'user-top-read',
 ];
 
 // All possible scopes 
@@ -431,7 +438,7 @@ app.get('/callback', (req, res) => {
 
             // Store spotify information of each joined user 
             add_spotify(access_token, ip)
-            res.render('home_page.html')
+            res.render('home_page.ejs')
 
 
             setInterval(async () => {

@@ -474,7 +474,6 @@ music_box.children[0].addEventListener("click", () => {
 // Event listener for the start button in lobby page
 start_game_button.addEventListener("click", () => {
     socket.emit('startgame', 'true');
-    console.log("emits");
 });
 
 // start_game_button2.addEventListener("click", () => {
@@ -491,7 +490,6 @@ genre_selection.addEventListener("click", function (e) {
 
 // Event listener for the genre custom input
 genre_custom_input[1].addEventListener("click", () => {
-    console.log(genre_custom_input[0].value);
     socket.emit('genre_selected', genre_custom_input[0].value, user_ip);
 });
 
